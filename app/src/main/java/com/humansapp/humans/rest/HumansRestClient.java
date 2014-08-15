@@ -7,18 +7,6 @@ package com.humansapp.humans.rest;
 import com.humansapp.HumansApplication;
 import com.loopj.android.http.*;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-
-import java.io.ByteArrayInputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
-import javax.security.auth.x500.X500Principal;
-
 public class HumansRestClient {
     private static HumansRestClient instance = null;
 
