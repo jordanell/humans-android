@@ -31,7 +31,7 @@ public class MainActivity extends ListActivity {
         TextView emptyText = (TextView)findViewById(android.R.id.empty);
         getListView().setEmptyView(emptyText);
 
-        HumansRestClient.instance().get("conversations?user_id=5", null, new JsonHttpResponseHandler() {
+        HumansRestClient.instance().get("conversations?user_id=3", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -58,7 +58,7 @@ public class MainActivity extends ListActivity {
     public void findHuman(View v) {
         final ProgressDialog progress = ProgressDialog.show(this, "Finding Human", "Please wait while our robots find humans", true);
 
-        HumansRestClient.instance().post("conversations?user_id=5", null, new JsonHttpResponseHandler() {
+        HumansRestClient.instance().post("conversations?user_id=3", null, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
