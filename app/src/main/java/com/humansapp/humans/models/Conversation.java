@@ -1,23 +1,35 @@
 package com.humansapp.humans.models;
 
-import java.util.Map;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.Date;
 
 /**
  * Created by jordan on 2014-08-14.
  */
 public class Conversation extends Model {
+    private String id;
+    private String[] userIds;
+    private String lastMessage;
+    private String created;
+    private String updated;
 
-    public Conversation(Map model) {
-        super(model);
+    public Conversation() {
+
     }
 
     public String getLastMessage() {
-        String message = (String) this.model.get("lastMessage");
-
-        if(message == null) {
+        if(lastMessage == null) {
             return "Be the first to say something!";
         } else {
-            return message;
+            return lastMessage;
         }
+    }
+
+    public DateTime getUpdated() {
+        DateTimeFormatter parser2 = ISODateTimeFormat.dateTimeNoMillis();
+        return parser2.parseDateTime(updated);
     }
 }

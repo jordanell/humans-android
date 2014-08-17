@@ -2,10 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/splash_background" >
-
-
+    android:layout_height="match_parent" >
 
     <ImageView
         android:id="@+id/imgLogo"
@@ -13,6 +10,6 @@
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         android:layout_marginTop="40dp"
-        android:src="@drawable/splash_icon" />
+        android:src="@drawable/humans_logo" />
 
 </RelativeLayout>
