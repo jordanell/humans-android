@@ -6,17 +6,9 @@ package com.humansapp.humans.rest;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
 import com.humansapp.HumansApplication;
 import com.humansapp.humans.models.User;
 import com.loopj.android.http.*;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class HumansRestClient {
     private static HumansRestClient instance = null;
