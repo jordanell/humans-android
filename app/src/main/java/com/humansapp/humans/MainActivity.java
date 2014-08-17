@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,9 +27,15 @@ import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
 import org.json.*;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+
 public class MainActivity extends ListActivity {
 
     private String userId = null;
+    private PullToRefreshLayout mPullToRefreshLayout;
+    LinearLayout progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,23 +43,38 @@ public class MainActivity extends ListActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Set the empty list
-        TextView emptyText = (TextView)findViewById(android.R.id.empty);
-        getListView().setEmptyView(emptyText);
-
         loadConversations();
+
+        // Now find the PullToRefreshLayout to setup
+        mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
+
+        // Now setup the PullToRefreshLayout
+        ActionBarPullToRefresh.from(this)
+            // Mark All Children as pullable
+            .allChildrenArePullable()
+            // Set a OnRefreshListener
+            .listener(new OnRefreshListener() {
+                @Override
+                public void onRefreshStarted(View view) {
+                    getListView().setAdapter(null);
+                    loadConversations();
+                }
+            })
+            // Finally commit the setup to our PullToRefreshLayout
+            .setup(mPullToRefreshLayout);
     }
 
     private void loadConversations() {
+        // Show we are loading something
+        progress = (LinearLayout) findViewById(R.id.header_progress);
+        progress.setVisibility(View.VISIBLE);
+
         // Ensure we have a valid user
         if(userId == null) {
             SharedPreferences userPrefs = this.getPreferences(Context.MODE_PRIVATE);
             String token = userPrefs.getString("id", null);
 
-            System.out.println("Token: " + token);
-
             if(token == null) {
-                System.out.println("Getting user");
                 createUser();
                 return;
             } else {
@@ -73,11 +96,12 @@ public class MainActivity extends ListActivity {
                     ConversationsAdapter adapter =
                             new ConversationsAdapter(getBaseContext(), conversations);
 
-                    ProgressBar progress = (ProgressBar) findViewById(R.id.list_loading);
-                    progress.setVisibility(View.GONE);
-
                     setListAdapter(adapter);
                     getListView().setVisibility(View.VISIBLE);
+
+                    mPullToRefreshLayout.setRefreshComplete();
+
+                    progress.setVisibility(View.GONE);
                 } catch (JSONException e) {
                     // Something went wrong
                 }

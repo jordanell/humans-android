@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile files('libs/joda-time-2.4.jar')
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.6'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
 }
