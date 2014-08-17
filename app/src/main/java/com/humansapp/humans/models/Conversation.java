@@ -1,8 +1,6 @@
 package com.humansapp.humans.models;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Date;
 
@@ -12,6 +10,7 @@ import java.util.Date;
 public class Conversation extends Model {
     private String id;
     private String[] userIds;
+    private String name;
     private String lastMessage;
     private String created;
     private String updated;
@@ -28,8 +27,12 @@ public class Conversation extends Model {
         }
     }
 
-    public DateTime getUpdated() {
-        DateTimeFormatter parser2 = ISODateTimeFormat.dateTimeNoMillis();
-        return parser2.parseDateTime(updated);
+    public String getName() {
+        return this.name;
+    }
+
+    public Date getUpdated() {
+        DateTime dateTime = new DateTime(updated);
+        return dateTime.toDate();
     }
 }

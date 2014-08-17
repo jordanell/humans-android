@@ -9,8 +9,7 @@ import android.widget.TextView;
 
 import com.humansapp.humans.R;
 import com.humansapp.humans.models.Conversation;
-
-import org.w3c.dom.Text;
+import com.ocpsoft.pretty.time.PrettyTime;
 
 /**
  * Created by jordan on 2014-08-14.
@@ -62,6 +61,15 @@ public class ConversationsAdapter extends BaseAdapter {
 
         TextView tv = (TextView) view.findViewById(R.id.last_message);
         tv.setText(conversation.getLastMessage());
+
+        tv = (TextView) view.findViewById(R.id.conversation_title);
+        tv.setText(conversation.getName());
+
+        tv = (TextView) view.findViewById(R.id.pretty_date);
+        PrettyTime p = new PrettyTime();
+        String date = p.format(conversation.getUpdated());
+        tv.setText(date);
+
 
         return view;
     }
