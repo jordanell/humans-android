@@ -6,6 +6,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -61,10 +62,21 @@ public class MainActivity extends ListActivity {
             // Finally commit the setup to our PullToRefreshLayout
             .setup(mPullToRefreshLayout);
 
+        final MainActivity mainActivity = this;
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Conversation conversation = (Conversation) getListView().getItemAtPosition(i);
 
+                Intent intent = new Intent(mainActivity, ConversationActivity.class);
+
+                Bundle b = new Bundle();
+                b.putString("id", conversation.getId());
+                b.putString("name", conversation.getName());
+
+                intent.putExtras(b);
+
+                startActivity(intent);
             }
         });
     }

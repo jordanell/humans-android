@@ -35,4 +35,8 @@ public class Conversation extends Model {
         DateTime dateTime = new DateTime(updated);
         return dateTime.toDate();
     }
+
+    public String getId() {
+        return this.id;
+    }
 }
