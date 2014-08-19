@@ -8,7 +8,7 @@ import android.content.Intent;
 /**
  * Created by jordan on 2014-08-12.
  */
-public class SplashScreen extends Activity {
+public class SplashActivity extends Activity {
 
     // Timer
     private static int SPLASH_TIME_OUT = 2500;
@@ -22,7 +22,7 @@ public class SplashScreen extends Activity {
 
             @Override
             public void run() {
-                Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                Intent i = new Intent(SplashActivity.this, HumansActivity.class);
                 startActivity(i);
 
                 finish();

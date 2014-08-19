@@ -4,9 +4,6 @@ package com.humansapp.humans.rest;
  * Created by jordan on 2014-08-14.
  */
 
-import android.content.Context;
-
-import com.humansapp.HumansApplication;
 import com.humansapp.humans.models.User;
 import com.loopj.android.http.*;
 
@@ -22,12 +19,7 @@ public class HumansRestClient {
 
     protected HumansRestClient() {
         this.client = new AsyncHttpClient();
-
-        if(HumansApplication.isDebuggable()) {
-            this.baseURL = "http://192.168.0.105:4444/";
-        } else {
-            this.baseURL = "http://api.humansapp.com:4444/";
-        }
+        this.baseURL = "http://192.168.0.105:4444/";
     }
 
     public static HumansRestClient instance() {

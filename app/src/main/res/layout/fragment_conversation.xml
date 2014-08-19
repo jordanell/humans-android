@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ConversationActivity">
+    android:orientation="vertical"
+    android:fillViewport="true">
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/messages_list"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -16,7 +15,7 @@
         android:paddingRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_above="@+id/btn_find"
-        android:visibility="invisible"/>
+        android:stackFromBottom="true"/>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -39,7 +38,7 @@
         </EditText>
 
         <Button
-            android:id="@+id/btnSend"
+            android:id="@+id/btn_send"
             android:layout_height="45dp"
             android:layout_width="60dp"
             android:drawableLeft="@drawable/ic_action_send_now"
