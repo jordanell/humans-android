@@ -6,6 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="loading_conversations">Loading Conversations...</string>
     <string name="refresh">Refresh</string>
+    <string name="leave_conversation">Leave Conversation</string>
     <string name="conversations_activity_title">Conversation</string>
 
 </resources>

@@ -48,8 +48,6 @@ public class ConversationsListFragment extends Fragment {
 
     private PullToRefreshLayout mPullToRefreshLayout;
 
-    public boolean shouldLoadConversations = true;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,13 +70,12 @@ public class ConversationsListFragment extends Fragment {
         empty = (TextView) view.findViewById(R.id.empty);
 
         //Load the conversations if needed
-        if(this.shouldLoadConversations) {
-            loadConversations();
-            shouldLoadConversations = true;
-        } else {
+        if(getArguments() != null && getArguments().getBoolean("new")) {
             loading.setVisibility(View.GONE);
             content.setVisibility(View.VISIBLE);
             empty.setVisibility(View.VISIBLE);
+        } else {
+            loadConversations();
         }
 
         // Now find the PullToRefreshLayout to setup
