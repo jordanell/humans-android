@@ -131,6 +131,7 @@ public class UserSetupFragment extends Fragment {
         this.handler.removeCallbacks(this.runnable);
 
         ConversationsListFragment fragment = new ConversationsListFragment();
+        fragment.shouldLoadConversations = false;
         ((HumansActivity)getActivity()).changeFragment(fragment, false);
     }
 }
