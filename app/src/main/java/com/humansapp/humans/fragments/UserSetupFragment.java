@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -36,6 +37,8 @@ public class UserSetupFragment extends Fragment {
     private Handler handler;
     private Runnable runnable;
 
+    private View view;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +46,7 @@ public class UserSetupFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_user_setup, container, false);
+        this.view = view;
 
         this.startTime = System.currentTimeMillis();
 
@@ -81,16 +85,45 @@ public class UserSetupFragment extends Fragment {
                     SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
                     prefs.edit().putString("userId", user.getId()).commit();
 
+                    // Place user id in rest client
+                    HumansRestClient.instance().setUserId(user.getId());
+
                     setupComplete = true;
 
                     if(System.currentTimeMillis()-startTime > SETUP_TIME_OUT) {
                         goToConversations();
                     }
                 } catch (JSONException e) {
-                    // Something went wrong
+                    showError();
                 }
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                showError();
+            }
         });
+    }
+
+    private void showError() {
+        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        error.setVisibility(View.VISIBLE);
+
+        error.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retry();
+            }
+        });
+    }
+
+    private void retry() {
+        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        error.setVisibility(View.GONE);
+
+        error.setOnClickListener(null);
+
+        createUser();
     }
 
     private void goToConversations() {

@@ -140,8 +140,18 @@ public class ConversationsListFragment extends Fragment {
                     progress.setVisibility(View.GONE);
                 } catch (JSONException e) {
                     // Something went wrong
+                    progress.setVisibility(View.GONE);
+                    showError();
                 }
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                progress = (LinearLayout) view.findViewById(R.id.header_progress);
+                progress.setVisibility(View.GONE);
+                showError();
+            }
+
         });
     }
 
@@ -158,6 +168,27 @@ public class ConversationsListFragment extends Fragment {
                 progress.dismiss();
             }
         });
+    }
+
+    private void showError() {
+        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        error.setVisibility(View.VISIBLE);
+
+        error.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retry();
+            }
+        });
+    }
+
+    private void retry() {
+        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        error.setVisibility(View.GONE);
+
+        error.setOnClickListener(null);
+
+        loadConversations();
     }
 
     @Override

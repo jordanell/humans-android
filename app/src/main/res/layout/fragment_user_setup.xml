@@ -6,6 +6,42 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
+    <!-- Error -->
+    <LinearLayout
+        android:id="@+id/error_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="30dp"
+            android:textColor="#999999"
+            android:text="Oh no!"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#999999"
+            android:text="Our robots could not connect you to other humans!"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:textColor="#999999"
+            android:text="Tap screen to retry"/>
+
+     </LinearLayout>
+
+    <!-- Content -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
