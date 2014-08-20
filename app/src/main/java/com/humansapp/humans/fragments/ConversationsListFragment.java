@@ -112,7 +112,7 @@ public class ConversationsListFragment extends Fragment {
         adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
 
         RequestParams params = new RequestParams();
-        params.put("user_id", 5);
+        params.put("user_id", HumansRestClient.instance().getUserId());
 
         HumansRestClient.instance().get("conversations", params, new JsonHttpResponseHandler() {
             @Override
@@ -143,7 +143,8 @@ public class ConversationsListFragment extends Fragment {
     private void findHuman(View v) {
         final ProgressDialog progress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
 
-        String url = "conversations/?user_id=5";
+        String url = "conversations/?user_id=";
+        url += HumansRestClient.instance().getUserId();
 
         HumansRestClient.instance().post(url, null, new JsonHttpResponseHandler() {
 
