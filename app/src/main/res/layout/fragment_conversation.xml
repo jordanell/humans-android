@@ -8,6 +8,7 @@
 
     <!-- Loading -->
     <RelativeLayout
+        android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
@@ -45,7 +46,7 @@
 
     <!-- Content -->
     <ListView
-        android:id="@+id/messages_list"
+        android:id="@+id/content"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
