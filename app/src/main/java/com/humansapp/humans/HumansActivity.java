@@ -1,7 +1,9 @@
 package com.humansapp.humans;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.humansapp.humans.fragments.ConversationsListFragment;
+import com.humansapp.humans.fragments.UserSetupFragment;
+import com.humansapp.humans.rest.HumansRestClient;
 
 /**
  * Created by jordan on 2014-08-18.
@@ -23,9 +27,20 @@ public class HumansActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_humans);
 
-        // Go directly to conversations fragment
-        ConversationsListFragment conversations = new ConversationsListFragment();
-        changeFragment(conversations, false);
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", null);
+        if(userId == null) {
+            // Go to user setup
+            UserSetupFragment setupFragment = new UserSetupFragment();
+            changeFragment(setupFragment, false);
+        } else {
+            // Setup the user id
+            HumansRestClient.instance().setUserId(userId);
+
+            // Go directly to conversations fragment
+            ConversationsListFragment conversations = new ConversationsListFragment();
+            changeFragment(conversations, false);
+        }
     }
 
     @Override

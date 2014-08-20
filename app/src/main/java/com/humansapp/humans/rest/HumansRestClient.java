@@ -15,7 +15,7 @@ public class HumansRestClient {
     private AsyncHttpClient client;
     private String baseURL;
 
-    private User user;
+    private String userId;
 
     protected HumansRestClient() {
         this.client = new AsyncHttpClient();
@@ -40,6 +40,14 @@ public class HumansRestClient {
 
     private String getAbsoluteUrl(String relativeUrl) {
         return baseURL + relativeUrl;
+    }
+
+    public String getUserId() {
+        return this.userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 }
