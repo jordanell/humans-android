@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -38,6 +39,8 @@ public class ConversationsListFragment extends Fragment {
     private LinearLayout progress;
     private ConversationsAdapter adapter;
     private ListView list;
+    private RelativeLayout loading;
+    private RelativeLayout content;
 
     private View view;
 
@@ -59,6 +62,9 @@ public class ConversationsListFragment extends Fragment {
         final ListView list = (ListView) view.findViewById(R.id.conversations_list);
         this.list = list;
         list.setAdapter(adapter);
+
+        loading = (RelativeLayout) view.findViewById(R.id.loading);
+        content = (RelativeLayout) view.findViewById(R.id.content);
 
         //Load the conversations
         loadConversations();
@@ -109,10 +115,9 @@ public class ConversationsListFragment extends Fragment {
     }
 
     private void loadConversations() {
-
         // Show we are loading something
-        progress = (LinearLayout) view.findViewById(R.id.header_progress);
-        progress.setVisibility(View.VISIBLE);
+        loading.setVisibility(View.VISIBLE);
+        content.setVisibility(View.GONE);
 
         // Clear old list
         adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
@@ -132,12 +137,14 @@ public class ConversationsListFragment extends Fragment {
                             new ConversationsAdapter(getActivity(), conversations);
 
                     adapter = ad;
-                    list.setVisibility(View.VISIBLE);
                     list.setAdapter(adapter);
 
-                    mPullToRefreshLayout.setRefreshComplete();
+                    list.setVisibility(View.VISIBLE);
 
-                    progress.setVisibility(View.GONE);
+                    loading.setVisibility(View.GONE);
+                    content.setVisibility(View.VISIBLE);
+
+                    mPullToRefreshLayout.setRefreshComplete();
                 } catch (JSONException e) {
                     // Something went wrong
                     progress.setVisibility(View.GONE);
@@ -151,7 +158,6 @@ public class ConversationsListFragment extends Fragment {
                 progress.setVisibility(View.GONE);
                 showError();
             }
-
         });
     }
 
