@@ -6,6 +6,44 @@
     android:orientation="vertical"
     android:fillViewport="true">
 
+    <!-- Loading -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_above="@+id/btn_find"
+        android:stackFromBottom="true">
+
+        <ProgressBar
+            android:id="@+id/p_header_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ProgressBar>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="55dp"
+            android:gravity="center_horizontal"
+            android:text="Our robots are finding your messages."
+            android:textColor="#999999"/>
+
+    </RelativeLayout>
+
+    <!-- Empty -->
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="There are no messages yet"
+        android:layout_above="@+id/btn_find"
+        android:stackFromBottom="true"
+        android:visibility="gone"/>
+
+    <!-- Content -->
     <ListView
         android:id="@+id/messages_list"
         android:layout_width="fill_parent"
@@ -15,7 +53,8 @@
         android:paddingRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_above="@+id/btn_find"
-        android:stackFromBottom="true"/>
+        android:stackFromBottom="true"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
