@@ -30,6 +30,7 @@ public class HumansActivity extends ActionBarActivity {
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
         String userId = prefs.getString("userId", null);
         if(userId == null) {
+            System.err.println("WTF");
             // Go to user setup
             UserSetupFragment setupFragment = new UserSetupFragment();
             changeFragment(setupFragment, false);

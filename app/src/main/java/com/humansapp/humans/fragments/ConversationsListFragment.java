@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,10 +35,11 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
  */
 public class ConversationsListFragment extends Fragment {
 
-    LinearLayout progress;
-    ConversationsAdapter adapter;
+    private LinearLayout progress;
+    private ConversationsAdapter adapter;
+    private ListView list;
 
-    View view;
+    private View view;
 
     private PullToRefreshLayout mPullToRefreshLayout;
 
@@ -43,6 +47,7 @@ public class ConversationsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_conversations_list, container, false);
         this.view = view;
@@ -52,6 +57,7 @@ public class ConversationsListFragment extends Fragment {
             adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
         }
         final ListView list = (ListView) view.findViewById(R.id.conversations_list);
+        this.list = list;
         list.setAdapter(adapter);
 
         //Load the conversations
@@ -126,7 +132,6 @@ public class ConversationsListFragment extends Fragment {
                             new ConversationsAdapter(getActivity(), conversations);
 
                     adapter = ad;
-                    ListView list = (ListView) view.findViewById(R.id.conversations_list);
                     list.setVisibility(View.VISIBLE);
                     list.setAdapter(adapter);
 
@@ -153,5 +158,24 @@ public class ConversationsListFragment extends Fragment {
                 progress.dismiss();
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_conversations_list_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                list.setAdapter(null);
+                loadConversations();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
