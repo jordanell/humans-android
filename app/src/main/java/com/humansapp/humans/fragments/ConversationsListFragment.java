@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -41,6 +42,7 @@ public class ConversationsListFragment extends Fragment {
     private ListView list;
     private RelativeLayout loading;
     private RelativeLayout content;
+    private TextView empty;
 
     private View view;
 
@@ -65,6 +67,7 @@ public class ConversationsListFragment extends Fragment {
 
         loading = (RelativeLayout) view.findViewById(R.id.loading);
         content = (RelativeLayout) view.findViewById(R.id.content);
+        empty = (TextView) view.findViewById(R.id.empty);
 
         //Load the conversations
         loadConversations();
@@ -118,6 +121,7 @@ public class ConversationsListFragment extends Fragment {
         // Show we are loading something
         loading.setVisibility(View.VISIBLE);
         content.setVisibility(View.GONE);
+        empty.setVisibility(View.GONE);
 
         // Clear old list
         adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
@@ -139,7 +143,11 @@ public class ConversationsListFragment extends Fragment {
                     adapter = ad;
                     list.setAdapter(adapter);
 
-                    list.setVisibility(View.VISIBLE);
+                    if(ad.getCount() == 0) {
+                        empty.setVisibility(View.VISIBLE);
+                    } else {
+                        list.setVisibility(View.VISIBLE);
+                    }
 
                     loading.setVisibility(View.GONE);
                     content.setVisibility(View.VISIBLE);
