@@ -54,7 +54,8 @@
     <RelativeLayout
         android:id="@+id/loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/header_progress"
@@ -107,10 +108,10 @@
 
         <TextView
             android:id="@+id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="55dp"
+            android:gravity="center"
             android:textColor="#999999"
             android:text="You have no conversations"
             android:visibility="gone"/>
