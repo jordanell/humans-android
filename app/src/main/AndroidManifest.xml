@@ -27,7 +27,8 @@
         <!-- Main Activity -->
         <activity
             android:name=".HumansActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize">
         </activity>
 
     </application>

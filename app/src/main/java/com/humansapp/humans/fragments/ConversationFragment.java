@@ -33,6 +33,7 @@ public class ConversationFragment extends Fragment {
     private RelativeLayout loading;
     private ListView content;
     private TextView empty;
+    private RelativeLayout error;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,6 +65,7 @@ public class ConversationFragment extends Fragment {
         this.loading = (RelativeLayout) view.findViewById(R.id.loading);
         this.content = (ListView) view.findViewById(R.id.content);
         this.empty = (TextView) view.findViewById(R.id.empty);
+        this.error = (RelativeLayout) view.findViewById(R.id.error);
 
         loadMessages();
 
@@ -75,6 +77,7 @@ public class ConversationFragment extends Fragment {
         loading.setVisibility(View.VISIBLE);
         content.setVisibility(View.GONE);
         empty.setVisibility(View.GONE);
+
 
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
@@ -94,7 +97,8 @@ public class ConversationFragment extends Fragment {
     }
 
     private void showError() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        empty.setVisibility(View.GONE);
+        loading.setVisibility(View.GONE);
         error.setVisibility(View.VISIBLE);
 
         error.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +110,6 @@ public class ConversationFragment extends Fragment {
     }
 
     private void retry() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
         error.setVisibility(View.GONE);
 
         error.setOnClickListener(null);

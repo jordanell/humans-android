@@ -7,39 +7,48 @@
     android:fillViewport="true">
 
     <!-- Error -->
-    <LinearLayout
-        android:id="@+id/error_layout"
+    <RelativeLayout
+        android:id="@+id/error"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:textSize="30dp"
-            android:textColor="#999999"
-            android:text="Oh no!"/>
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#999999"
-            android:text="Our robots could not find your conversations."/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="30dp"
+                android:textColor="#999999"
+                android:text="Oh no!"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:textColor="#999999"
-            android:text="Tap screen to retry"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#999999"
+                android:text="Our robots could not find your conversations."/>
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="#999999"
+                android:text="Tap screen to retry"/>
+
+         </LinearLayout>
+
+    </RelativeLayout>
 
     <!-- Loading -->
     <RelativeLayout

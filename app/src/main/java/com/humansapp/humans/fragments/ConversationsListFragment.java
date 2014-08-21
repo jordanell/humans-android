@@ -43,6 +43,7 @@ public class ConversationsListFragment extends Fragment {
     private RelativeLayout loading;
     private RelativeLayout content;
     private TextView empty;
+    private RelativeLayout error;
 
     private View view;
 
@@ -68,6 +69,7 @@ public class ConversationsListFragment extends Fragment {
         loading = (RelativeLayout) view.findViewById(R.id.loading);
         content = (RelativeLayout) view.findViewById(R.id.content);
         empty = (TextView) view.findViewById(R.id.empty);
+        error = (RelativeLayout) view.findViewById(R.id.error);
 
         //Load the conversations if needed
         if(getArguments() != null && getArguments().getBoolean("new")) {
@@ -128,6 +130,7 @@ public class ConversationsListFragment extends Fragment {
         loading.setVisibility(View.VISIBLE);
         content.setVisibility(View.GONE);
         empty.setVisibility(View.GONE);
+        error.setVisibility(View.GONE);
 
         // Clear old list
         adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
@@ -191,7 +194,6 @@ public class ConversationsListFragment extends Fragment {
     }
 
     private void showError() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
         error.setVisibility(View.VISIBLE);
 
         error.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +205,6 @@ public class ConversationsListFragment extends Fragment {
     }
 
     private void retry() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
         error.setVisibility(View.GONE);
 
         error.setOnClickListener(null);
