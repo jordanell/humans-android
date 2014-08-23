@@ -28,10 +28,6 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 /**
  * Created by jordan on 2014-08-18.
  */
@@ -46,8 +42,6 @@ public class ConversationsListFragment extends Fragment {
     private RelativeLayout error;
 
     private View view;
-
-    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,25 +73,6 @@ public class ConversationsListFragment extends Fragment {
         } else {
             loadConversations();
         }
-
-        // Now find the PullToRefreshLayout to setup
-        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
-
-        // Now setup the PullToRefreshLayout
-        ActionBarPullToRefresh.from(getActivity())
-            // Mark All Children as pullable
-            .allChildrenArePullable()
-                    // Set a OnRefreshListener
-            .listener(new OnRefreshListener() {
-                @Override
-                public void onRefreshStarted(View view) {
-                    list.setAdapter(null);
-                    loadConversations();
-                }
-            })
-                    // Finally commit the setup to our PullToRefreshLayout
-            .setup(mPullToRefreshLayout);
-
 
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,8 +127,6 @@ public class ConversationsListFragment extends Fragment {
 
                     loading.setVisibility(View.GONE);
                     content.setVisibility(View.VISIBLE);
-
-                    mPullToRefreshLayout.setRefreshComplete();
                 } catch (JSONException e) {
                     // Something went wrong
                     progress.setVisibility(View.GONE);
