@@ -85,40 +85,32 @@ public class ConversationsListFragment extends Fragment {
 
         // Now setup the PullToRefreshLayout
         ActionBarPullToRefresh.from(getActivity())
-                // Mark All Children as pullable
-                .allChildrenArePullable()
-                        // Set a OnRefreshListener
-                .listener(new OnRefreshListener() {
-                    @Override
-                    public void onRefreshStarted(View view) {
-                        list.setAdapter(null);
-                        loadConversations();
-                    }
-                })
-                        // Finally commit the setup to our PullToRefreshLayout
-                .setup(mPullToRefreshLayout);
+            // Mark All Children as pullable
+            .allChildrenArePullable()
+                    // Set a OnRefreshListener
+            .listener(new OnRefreshListener() {
+                @Override
+                public void onRefreshStarted(View view) {
+                    list.setAdapter(null);
+                    loadConversations();
+                }
+            })
+                    // Finally commit the setup to our PullToRefreshLayout
+            .setup(mPullToRefreshLayout);
 
 
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findHuman(view);
+            findHuman(view);
             }
         });
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Conversation conversation = (Conversation) list.getItemAtPosition(i);
-
-                Bundle b = new Bundle();
-                b.putString("id", conversation.getId());
-                b.putString("name", conversation.getName());
-
-                ConversationFragment fragment = new ConversationFragment();
-                fragment.setArguments(b);
-
-                ((HumansActivity)getActivity()).changeFragment(fragment, true);
+            Conversation conversation = (Conversation) list.getItemAtPosition(i);
+            openConversation(conversation);
             }
         });
 
@@ -189,6 +181,20 @@ public class ConversationsListFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 progress.dismiss();
+                try {
+                    String jsonConversations = response.get("conversation").toString();
+                    Gson gson = new Gson();
+                    Conversation conversation = gson.fromJson(jsonConversations, Conversation.class);
+
+                    openConversation(conversation);
+                } catch (JSONException e) {
+                    // Flash error
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                // Flash error
             }
         });
     }
@@ -210,6 +216,17 @@ public class ConversationsListFragment extends Fragment {
         error.setOnClickListener(null);
 
         loadConversations();
+    }
+
+    private void openConversation(Conversation conversation) {
+        Bundle b = new Bundle();
+        b.putString("id", conversation.getId());
+        b.putString("name", conversation.getName());
+
+        ConversationFragment fragment = new ConversationFragment();
+        fragment.setArguments(b);
+
+        ((HumansActivity)getActivity()).changeFragment(fragment, true);
     }
 
     @Override

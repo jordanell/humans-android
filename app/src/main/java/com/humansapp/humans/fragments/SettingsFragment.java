@@ -25,6 +25,15 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        getActivity().getActionBar().setHomeButtonEnabled(false);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActivity().getActionBar().setTitle("Humans");
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_settings_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);

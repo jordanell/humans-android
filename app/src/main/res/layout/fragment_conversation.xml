@@ -83,7 +83,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="There are no messages yet"
+        android:text="There are no messages yet. \n Be the first to say something!"
         android:textColor="#999999"
         android:layout_above="@+id/btn_find"
         android:stackFromBottom="true"
