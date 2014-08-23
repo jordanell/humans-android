@@ -182,8 +182,6 @@ public class ConversationFragment extends Fragment {
                     }
 
                     loading.setVisibility(View.GONE);
-                    list.setVisibility(View.VISIBLE);
-
                 } catch (JSONException e) {
                     showError();
                 }
