@@ -2,6 +2,7 @@ package com.humansapp.humans.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -229,9 +231,15 @@ public class ConversationFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
+        // Deal with action bar
         getActivity().getActionBar().setHomeButtonEnabled(false);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
         getActivity().getActionBar().setTitle("Humans");
+
+        // Deal with keyboard
+        EditText input = (EditText) view.findViewById(R.id.input_message);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
     }
 
     @Override

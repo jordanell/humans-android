@@ -3,7 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/message_container"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp">
     
     <LinearLayout
         android:id="@+id/background_wrapper"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/other_sent_bubble"
         android:layout_margin="5dp"
+        android:layout_marginRight="250dp"
         android:padding="7dp">
 
         <TextView

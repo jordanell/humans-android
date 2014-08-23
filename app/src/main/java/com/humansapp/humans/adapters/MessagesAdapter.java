@@ -72,6 +72,12 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
         if(myMessage) {
             container.setGravity(Gravity.RIGHT);
             background.setBackgroundResource(R.drawable.self_sent_bubble);
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            params.setMargins(250, 0, 0, 0);
+            background.setLayoutParams(params);
         }
 
         TextView tv = (TextView) view.findViewById(R.id.message);
