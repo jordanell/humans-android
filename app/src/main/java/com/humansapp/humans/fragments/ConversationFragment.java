@@ -243,6 +243,8 @@ public class ConversationFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
+                list.setAdapter(null);
+                loadMessages();
                 break;
             case R.id.action_leave:
                 break;
