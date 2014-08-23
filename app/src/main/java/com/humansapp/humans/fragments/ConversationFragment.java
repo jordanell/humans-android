@@ -1,6 +1,8 @@
 package com.humansapp.humans.fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +28,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.apache.http.client.utils.URIUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -247,6 +248,7 @@ public class ConversationFragment extends Fragment {
                 loadMessages();
                 break;
             case R.id.action_leave:
+                leavePrompt();
                 break;
             case R.id.action_settings:
                 SettingsFragment fragment = new SettingsFragment();
@@ -255,5 +257,40 @@ public class ConversationFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void leavePrompt() {
+        new AlertDialog.Builder(getActivity())
+            .setTitle("Leave")
+            .setMessage("Are you sure you want to leave this human?")
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    leaveConversation();
+                }
+
+            })
+            .setNegativeButton("No", null)
+            .show();
+    }
+
+    private void leaveConversation() {
+        StringBuilder url = new StringBuilder();
+        url.append("conversations/leave?user_id=");
+        url.append(HumansRestClient.instance().getUserId());
+        url.append("&conversation_id=");
+        url.append(conversationId);
+
+        HumansRestClient.instance().put(url.toString(), null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                getActivity().onBackPressed();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                // Flash something here
+            }
+        });
     }
 }

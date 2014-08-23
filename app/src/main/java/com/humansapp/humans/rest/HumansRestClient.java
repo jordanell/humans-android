@@ -38,6 +38,10 @@ public class HumansRestClient {
         client.post(getAbsoluteUrl(url), params, responseHandler);
     }
 
+    public void put(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.put(getAbsoluteUrl(url), params, responseHandler);
+    }
+
     private String getAbsoluteUrl(String relativeUrl) {
         return baseURL + relativeUrl;
     }
