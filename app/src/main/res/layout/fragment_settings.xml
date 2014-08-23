@@ -12,6 +12,7 @@
             android:key="display_name"
             android:title="Display Name"
             android:defaultValue="Anonymous"
+            android:summary="Anonymous"
             android:selectAllOnFocus="true"
             android:inputType="textCapWords"
             android:capitalize="words"
