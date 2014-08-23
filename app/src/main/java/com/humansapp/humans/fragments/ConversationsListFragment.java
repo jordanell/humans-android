@@ -1,8 +1,8 @@
 package com.humansapp.humans.fragments;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -225,6 +225,10 @@ public class ConversationsListFragment extends Fragment {
             case R.id.action_refresh:
                 list.setAdapter(null);
                 loadConversations();
+                break;
+            case R.id.action_settings:
+                SettingsFragment fragment = new SettingsFragment();
+                ((HumansActivity)getActivity()).changeFragment(fragment, true);
                 break;
         }
 

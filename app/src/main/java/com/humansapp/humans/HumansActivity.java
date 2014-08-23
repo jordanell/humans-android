@@ -1,13 +1,12 @@
 package com.humansapp.humans;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
+import android.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,7 +53,7 @@ public class HumansActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -62,7 +61,7 @@ public class HumansActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
 
         if(fm.getBackStackEntryCount() == 0) {
             new AlertDialog.Builder(this)
@@ -78,12 +77,12 @@ public class HumansActivity extends ActionBarActivity {
                 .setNegativeButton("No", null)
                 .show();
         } else {
-            super.onBackPressed();
+            fm.popBackStack();
         }
     }
 
     public void changeFragment(Fragment fragment, boolean saveState) {
-        FragmentManager fragManager = getSupportFragmentManager();
+        FragmentManager fragManager = getFragmentManager();
         if (saveState) {
             // Switch fragments.
             fragManager.beginTransaction()

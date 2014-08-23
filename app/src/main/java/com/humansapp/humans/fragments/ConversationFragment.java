@@ -1,18 +1,18 @@
 package com.humansapp.humans.fragments;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.humansapp.humans.HumansActivity;
 import com.humansapp.humans.R;
 import com.humansapp.humans.rest.HumansRestClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -139,6 +139,10 @@ public class ConversationFragment extends Fragment {
             case R.id.action_refresh:
                 break;
             case R.id.action_leave:
+                break;
+            case R.id.action_settings:
+                SettingsFragment fragment = new SettingsFragment();
+                ((HumansActivity)getActivity()).changeFragment(fragment, true);
                 break;
         }
 
