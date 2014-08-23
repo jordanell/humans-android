@@ -4,42 +4,49 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.humansapp.humans.R;
 import com.humansapp.humans.models.Conversation;
+import com.humansapp.humans.models.Message;
 import com.ocpsoft.pretty.time.PrettyTime;
+
+import java.util.ArrayList;
 
 /**
  * Created by jordan on 2014-08-14.
  */
-public class ConversationsAdapter extends BaseAdapter {
+public class ConversationsAdapter extends ArrayAdapter<Conversation> {
 
-    Conversation[] conversations;
+    ArrayList<Conversation> conversations;
     Context context;
 
-    public ConversationsAdapter(Context context, Conversation[] conversations) {
+    public ConversationsAdapter(Context context, ArrayList<Conversation> conversations) {
+        super(context, R.layout.list_item_conversation, conversations);
         this.context = context;
         this.conversations = conversations;
     }
 
     @Override
+    public void add(Conversation conversation) {
+        super.add(conversation);
+    }
+
+    public void remove(Conversation conversation) {
+        this.conversations.remove(conversation);
+        this.notifyDataSetChanged();
+    }
+
+    @Override
     public int getCount() {
-        if(conversations == null) {
-            return 0;
-        } else {
-            return conversations.length;
-        }
+        return this.conversations.size();
     }
 
     @Override
     public Conversation getItem(int position) {
-        if(conversations == null != position >= 0 && position < conversations.length) {
-            return conversations[position];
-        } else {
-            return null;
-        }
+        return this.conversations.get(position);
     }
 
     @Override

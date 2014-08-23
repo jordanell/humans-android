@@ -1,8 +1,11 @@
 package com.humansapp.humans.fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +31,9 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by jordan on 2014-08-18.
  */
@@ -43,6 +49,9 @@ public class ConversationsListFragment extends Fragment {
 
     private View view;
 
+    private final int CM_VIEW = 1;
+    private final int CM_LEAVE = 2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,7 +63,7 @@ public class ConversationsListFragment extends Fragment {
 
         // Set up the conversation list adapter
         if(adapter == null) {
-            adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
+            adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
         }
         final ListView list = (ListView) view.findViewById(R.id.conversations_list);
         this.list = list;
@@ -77,17 +86,20 @@ public class ConversationsListFragment extends Fragment {
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            findHuman(view);
+                findHuman(view);
             }
         });
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Conversation conversation = (Conversation) list.getItemAtPosition(i);
-            openConversation(conversation);
+                Conversation conversation = (Conversation) list.getItemAtPosition(i);
+                openConversation(conversation);
             }
         });
+
+        // Set up the conversations context menu
+        registerForContextMenu(list);
 
         return view;
     }
@@ -100,7 +112,7 @@ public class ConversationsListFragment extends Fragment {
         error.setVisibility(View.GONE);
 
         // Clear old list
-        adapter = new ConversationsAdapter(getActivity(), new Conversation[0]);
+        adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
 
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
@@ -113,8 +125,7 @@ public class ConversationsListFragment extends Fragment {
                     Gson gson = new Gson();
                     Conversation[] conversations = gson.fromJson(jsonConversations, Conversation[].class);
 
-                    ConversationsAdapter ad =
-                            new ConversationsAdapter(getActivity(), conversations);
+                    ConversationsAdapter ad = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>(Arrays.asList(conversations)));
 
                     adapter = ad;
                     list.setAdapter(adapter);
@@ -203,9 +214,42 @@ public class ConversationsListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(Menu.NONE, CM_VIEW, Menu.NONE, "View");
+        menu.add(Menu.NONE, CM_LEAVE, Menu.NONE, "Leave");
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_conversations_list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final Conversation conversation = adapter.getItem(info.position);
+        switch (item.getItemId()) {
+            case CM_VIEW:
+                openConversation(conversation);
+                return true;
+            case CM_LEAVE:
+                new AlertDialog.Builder(getActivity())
+                    .setTitle("Leave")
+                    .setMessage("Are you sure you want to leave this human?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            leaveConversation(conversation);
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -223,5 +267,32 @@ public class ConversationsListFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void leaveConversation(Conversation conversation) {
+        StringBuilder url = new StringBuilder();
+        url.append("conversations/leave?user_id=");
+        url.append(HumansRestClient.instance().getUserId());
+        url.append("&conversation_id=");
+        url.append(conversation.getId());
+
+        HumansRestClient.instance().put(url.toString(), null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // Flash something here
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                // Flash something here
+            }
+        });
+
+        adapter.remove(conversation);
+
+        if(adapter.getCount() == 0) {
+            empty.setVisibility(View.VISIBLE);
+            list.setVisibility(View.GONE);
+        }
     }
 }
