@@ -147,6 +147,7 @@ public class ConversationFragment extends Fragment {
         input.setText("");
         adapter.add(new Message(HumansRestClient.instance().getUserId(), message));
         empty.setVisibility(View.GONE);
+        list.setVisibility(View.VISIBLE);
 
     }
 
