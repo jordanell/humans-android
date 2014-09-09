@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -38,7 +39,7 @@ import java.util.Arrays;
 /**
  * Created by jordan on 2014-08-18.
  */
-public class ConversationsListFragment extends Fragment {
+public class ConversationsListFragment extends InifiniteScrollFragment {
 
     private LinearLayout progress;
     private ConversationsAdapter adapter;
@@ -99,6 +100,25 @@ public class ConversationsListFragment extends Fragment {
             }
         });
 
+        // Set infinite scroll listener
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                if ( i3 != 0 && (float)i / (float)i3 > 0.5f && ConversationsListFragment.this.fetching == false &&
+                        ConversationsListFragment.this.complete == false) {
+                    System.out.println("Loading more");
+                    ConversationsListFragment.this.page++;
+                    loadConversations();
+                }
+            }
+        });
+
         // Set up the conversations context menu
         registerForContextMenu(list);
 
@@ -106,17 +126,23 @@ public class ConversationsListFragment extends Fragment {
     }
 
     private void loadConversations() {
-        // Show we are loading something
-        loading.setVisibility(View.VISIBLE);
-        content.setVisibility(View.GONE);
-        empty.setVisibility(View.GONE);
-        error.setVisibility(View.GONE);
+        if (list.getAdapter().getCount() == 0) {
+            // Show we are loading something for the first time
+            loading.setVisibility(View.VISIBLE);
+            content.setVisibility(View.GONE);
+            empty.setVisibility(View.GONE);
+            error.setVisibility(View.GONE);
+        }
+
+        // Set the infinite scroll to loading
+        this.fetching = true;
 
         // Clear old list
         adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
 
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
+        params.put("page", this.page);
 
         HumansRestClient.instance().get("conversations", params, new JsonHttpResponseHandler() {
             @Override
@@ -126,22 +152,31 @@ public class ConversationsListFragment extends Fragment {
                     Gson gson = new Gson();
                     Conversation[] conversations = gson.fromJson(jsonConversations, Conversation[].class);
 
-                    ConversationsAdapter ad = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>(Arrays.asList(conversations)));
+                    ArrayList<Conversation> cList = new ArrayList<Conversation>(Arrays.asList(conversations));
 
-                    adapter = ad;
-                    list.setAdapter(adapter);
+                    if  (cList.size() == 0) {
+                        ConversationsListFragment.this.complete = true;
+                    }
 
-                    if(ad.getCount() == 0) {
+                    ((ConversationsAdapter)list.getAdapter()).addAll(cList);
+
+                    if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
                         list.setVisibility(View.VISIBLE);
                     }
 
+                    if (ConversationsListFragment.this.page == 1) {
+                        list.setSelection(0);
+                    }
+
                     loading.setVisibility(View.GONE);
                     content.setVisibility(View.VISIBLE);
+
+                    ConversationsListFragment.this.fetching = false;
                 } catch (JSONException e) {
                     // Something went wrong
-                    progress.setVisibility(View.GONE);
+                    ConversationsListFragment.this.fetching = false;
                     showError();
                 }
             }
@@ -150,6 +185,9 @@ public class ConversationsListFragment extends Fragment {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
                 progress = (LinearLayout) view.findViewById(R.id.header_progress);
                 progress.setVisibility(View.GONE);
+
+                ConversationsListFragment.this.fetching = false;
+
                 showError();
             }
         });
@@ -262,7 +300,9 @@ public class ConversationsListFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                list.setAdapter(null);
+                ((ConversationsAdapter)list.getAdapter()).clear();
+                this.page = 1;
+                this.complete = false;
                 loadConversations();
                 break;
             case R.id.action_settings:

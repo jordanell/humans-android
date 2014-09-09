@@ -39,6 +39,11 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
         this.notifyDataSetChanged();
     }
 
+    public void clear() {
+        this.conversations.clear();
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return this.conversations.size();
