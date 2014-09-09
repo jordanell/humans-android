@@ -3,6 +3,7 @@ package com.humansapp.humans.fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -136,6 +138,8 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
         // Set the infinite scroll to loading
         this.fetching = true;
+        final ViewGroup footerView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.list_footer, list, false);
+        list.addFooterView(footerView);
 
         // Clear old list
         adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
@@ -148,6 +152,8 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+                    list.removeFooterView(footerView);
+
                     String jsonConversations = response.get("conversations").toString();
                     Gson gson = new Gson();
                     Conversation[] conversations = gson.fromJson(jsonConversations, Conversation[].class);
@@ -158,7 +164,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                         ConversationsListFragment.this.complete = true;
                     }
 
-                    ((ConversationsAdapter)list.getAdapter()).addAll(cList);
+                    ((ConversationsAdapter)((HeaderViewListAdapter)list.getAdapter()).getWrappedAdapter()).addAll(cList);
 
                     if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
@@ -177,6 +183,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                 } catch (JSONException e) {
                     // Something went wrong
                     ConversationsListFragment.this.fetching = false;
+                    list.removeFooterView(footerView);
                     showError();
                 }
             }
@@ -187,6 +194,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                 progress.setVisibility(View.GONE);
 
                 ConversationsListFragment.this.fetching = false;
+                list.removeFooterView(footerView);
 
                 showError();
             }
@@ -300,7 +308,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                ((ConversationsAdapter)list.getAdapter()).clear();
+                ((ConversationsAdapter)((HeaderViewListAdapter)list.getAdapter()).getWrappedAdapter()).clear();
                 this.page = 1;
                 this.complete = false;
                 loadConversations();
