@@ -19,7 +19,7 @@ public class HumansRestClient {
 
     protected HumansRestClient() {
         this.client = new AsyncHttpClient();
-        this.baseURL = "http://192.168.0.105:4444/";
+        this.baseURL = "http://192.168.0.104:4444/";
     }
 
     public static HumansRestClient instance() {

@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -297,7 +298,8 @@ public class ConversationFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                // Flash something here
+                Toast.makeText(getActivity(), "Failed to leave this human forever. Try Again",
+                        Toast.LENGTH_LONG).show();
             }
         });
     }

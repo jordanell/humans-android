@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -172,13 +173,17 @@ public class ConversationsListFragment extends Fragment {
 
                     openConversation(conversation);
                 } catch (JSONException e) {
-                    // Flash error
+                    progress.dismiss();
+                    Toast.makeText(getActivity(), "The human found was no good. Try Again",
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                // Flash error
+                progress.dismiss();
+                Toast.makeText(getActivity(), "Failed to find human. Try Again",
+                        Toast.LENGTH_LONG).show();
             }
         });
     }
