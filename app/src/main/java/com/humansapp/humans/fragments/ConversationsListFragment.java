@@ -1,11 +1,10 @@
 package com.humansapp.humans.fragments;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +42,11 @@ import java.util.Arrays;
  */
 public class ConversationsListFragment extends InifiniteScrollFragment {
 
+    // Timer
+    private static int FIND_TIME_OUT = 2500;
+    long startTime;
+
+    // Layout
     private LinearLayout progress;
     private ConversationsAdapter adapter;
     private ListView list;
@@ -50,9 +54,11 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     private RelativeLayout content;
     private TextView empty;
     private RelativeLayout error;
+    private ProgressDialog findProgress;
 
     private View view;
 
+    // Options menu
     private final int CM_VIEW = 1;
     private final int CM_LEAVE = 2;
 
@@ -60,8 +66,11 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // Set the options menu
         setHasOptionsMenu(true);
 
+        // Get the view
         View view = inflater.inflate(R.layout.fragment_conversations_list, container, false);
         this.view = view;
 
@@ -73,6 +82,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         this.list = list;
         list.setAdapter(adapter);
 
+        // Get all the layout variables
         loading = (RelativeLayout) view.findViewById(R.id.loading);
         content = (RelativeLayout) view.findViewById(R.id.content);
         empty = (TextView) view.findViewById(R.id.empty);
@@ -202,7 +212,10 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     }
 
     private void findHuman(View v) {
-        final ProgressDialog progress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
+        // Show loading and start timer
+        this.findProgress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
+
+        this.startTime = System.currentTimeMillis();
 
         String url = "conversations/?user_id=";
         url += HumansRestClient.instance().getUserId();
@@ -211,32 +224,68 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                progress.dismiss();
                 try {
                     String jsonConversations = response.get("conversation").toString();
                     Gson gson = new Gson();
-                    Conversation conversation = gson.fromJson(jsonConversations, Conversation.class);
+                    final Conversation conversation = gson.fromJson(jsonConversations, Conversation.class);
 
-                    openConversation(conversation);
+                    if (System.currentTimeMillis()-startTime > FIND_TIME_OUT) {
+                        openConversation(conversation);
+                    } else {
+                        Handler handler = new Handler();
+                        Runnable delayedOpen = new Runnable() {
+                            @Override
+                            public void run() {
+                                openConversation(conversation);
+                            }
+                        };
+
+                        handler.postDelayed(delayedOpen, FIND_TIME_OUT - (System.currentTimeMillis()-startTime));
+                    }
                 } catch (JSONException e) {
-                    progress.dismiss();
-                    Toast.makeText(getActivity(), "The human found was no good. Try Again",
-                            Toast.LENGTH_LONG).show();
+                    delayedFindError(false);
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                progress.dismiss();
-                Toast.makeText(getActivity(), "Failed to find human. Try Again",
-                        Toast.LENGTH_LONG).show();
+                delayedFindError(true);
             }
         });
     }
 
-    private void showError() {
-        error.setVisibility(View.VISIBLE);
+    private void delayedFindError(final boolean screenError) {
+        if (System.currentTimeMillis()-startTime > FIND_TIME_OUT) {
+            findError();
+        } else {
+            Handler handler = new Handler();
+            Runnable delayedOpen = new Runnable() {
+                @Override
+                public void run() {
+                    if (screenError) {
+                        showError();
+                    } else {
+                        findError();
+                    }
+                }
+            };
 
+            handler.postDelayed(delayedOpen, FIND_TIME_OUT - (System.currentTimeMillis()-startTime));
+        }
+    }
+
+    private void findError() {
+        findProgress.dismiss();
+        Toast.makeText(getActivity(), "The human found was no good. Try Again",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void showError() {
+        if (findProgress != null) {
+            findProgress.dismiss();
+        }
+
+        error.setVisibility(View.VISIBLE);
         error.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,13 +296,14 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
     private void retry() {
         error.setVisibility(View.GONE);
-
         error.setOnClickListener(null);
 
         loadConversations();
     }
 
     private void openConversation(Conversation conversation) {
+        findProgress.dismiss();
+
         Bundle b = new Bundle();
         b.putString("id", conversation.getId());
         b.putString("name", conversation.getName());
