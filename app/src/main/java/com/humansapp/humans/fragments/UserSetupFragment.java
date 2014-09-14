@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
@@ -106,7 +106,7 @@ public class UserSetupFragment extends Fragment {
     }
 
     private void showError() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        RelativeLayout error = (RelativeLayout) view.findViewById(R.id.error_layout);
         error.setVisibility(View.VISIBLE);
 
         error.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +118,7 @@ public class UserSetupFragment extends Fragment {
     }
 
     private void retry() {
-        LinearLayout error = (LinearLayout) view.findViewById(R.id.error_layout);
+        RelativeLayout error = (RelativeLayout) view.findViewById(R.id.error_layout);
         error.setVisibility(View.GONE);
 
         error.setOnClickListener(null);
