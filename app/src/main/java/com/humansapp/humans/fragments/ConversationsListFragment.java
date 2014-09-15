@@ -302,7 +302,9 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     }
 
     private void openConversation(Conversation conversation) {
-        findProgress.dismiss();
+        if (findProgress != null) {
+            findProgress.dismiss();
+        }
 
         Bundle b = new Bundle();
         b.putString("id", conversation.getId());

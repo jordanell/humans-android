@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by jordan on 2014-08-22.
  */
-public class Message {
+public class Message implements Comparable<Message> {
     private String id;
     private String userId;
     private String name;
@@ -16,6 +16,10 @@ public class Message {
 
     public Message() {
 
+    }
+
+    public int compareTo(Message m) {
+        return getCreated().compareTo(m.getCreated());
     }
 
     public Message(String userId, String body) {
