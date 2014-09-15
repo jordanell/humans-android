@@ -30,7 +30,7 @@ public class HumansActivity extends ActionBarActivity {
         // Create data store
         dataStore = new DataStore();
 
-        // Set View
+        // Set content view
         setContentView(R.layout.activity_humans);
 
         // Setup user and go to correct fragment
@@ -89,6 +89,11 @@ public class HumansActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Swap the current fragment to be displayed at the root of this activity.
+     * @param fragment The new fragment to display.
+     * @param saveState Should the state be saved.
+     */
     public void changeFragment(Fragment fragment, boolean saveState) {
         FragmentManager fragManager = getFragmentManager();
         if (saveState) {
@@ -104,6 +109,10 @@ public class HumansActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Return the DataStore being used in this activity.
+     * @return The DataStore.
+     */
     public DataStore getDataStore() {
         return dataStore;
     }

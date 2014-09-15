@@ -46,10 +46,12 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     private static int FIND_TIME_OUT = 2500;
     long startTime;
 
-    // Layout
-    private LinearLayout progress;
+    // Adapter
     private ConversationsAdapter adapter;
+
+    // Layout
     private ListView list;
+    private LinearLayout progress;
     private RelativeLayout loading;
     private RelativeLayout content;
     private TextView empty;
@@ -74,27 +76,30 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         View view = inflater.inflate(R.layout.fragment_conversations_list, container, false);
         this.view = view;
 
-        // Set up the conversation list adapter
-        if(adapter == null) {
-            adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
-        }
-        final ListView list = (ListView) view.findViewById(R.id.conversations_list);
-        this.list = list;
-        list.setAdapter(adapter);
-
         // Get all the layout variables
         loading = (RelativeLayout) view.findViewById(R.id.loading);
+        error = (RelativeLayout) view.findViewById(R.id.error);
         content = (RelativeLayout) view.findViewById(R.id.content);
         empty = (TextView) view.findViewById(R.id.empty);
-        error = (RelativeLayout) view.findViewById(R.id.error);
+        list = (ListView) view.findViewById(R.id.conversations_list);
+
+        // Set up the conversation list adapter
+        if(adapter == null) {
+            adapter = new ConversationsAdapter(getActivity(), ((HumansActivity)getActivity()).getDataStore().getConversations());
+            list.setAdapter(adapter);
+        }
 
         //Load the conversations if needed
         if(getArguments() != null && getArguments().getBoolean("new")) {
             loading.setVisibility(View.GONE);
             content.setVisibility(View.VISIBLE);
             empty.setVisibility(View.VISIBLE);
-        } else {
+        } else if (adapter.getCount() == 0) {
             loadConversations();
+        } else {
+            list.setAdapter(adapter);
+            content.setVisibility(View.VISIBLE);
+            list.setVisibility(View.VISIBLE);
         }
 
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
@@ -137,22 +142,23 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         return view;
     }
 
+    /**
+     * Load the conversations for the current page.
+     */
     private void loadConversations() {
         if (list.getAdapter().getCount() == 0) {
             // Show we are loading something for the first time
             loading.setVisibility(View.VISIBLE);
+            error.setVisibility(View.GONE);
             content.setVisibility(View.GONE);
             empty.setVisibility(View.GONE);
-            error.setVisibility(View.GONE);
+            list.setVisibility(View.GONE);
         }
 
         // Set the infinite scroll to loading
         this.fetching = true;
         final ViewGroup footerView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.list_footer, list, false);
         list.addFooterView(footerView);
-
-        // Clear old list
-        adapter = new ConversationsAdapter(getActivity(), new ArrayList<Conversation>());
 
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
@@ -167,15 +173,15 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                     String jsonConversations = response.get("conversations").toString();
                     Gson gson = new Gson();
                     Conversation[] conversations = gson.fromJson(jsonConversations, Conversation[].class);
-
                     ArrayList<Conversation> cList = new ArrayList<Conversation>(Arrays.asList(conversations));
 
                     if  (cList.size() == 0) {
                         ConversationsListFragment.this.complete = true;
                     }
 
-                    ((ConversationsAdapter)((HeaderViewListAdapter)list.getAdapter()).getWrappedAdapter()).addAll(cList);
+                    adapter.addAll(cList);
 
+                    content.setVisibility(View.VISIBLE);
                     if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
@@ -187,8 +193,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                     }
 
                     loading.setVisibility(View.GONE);
-                    content.setVisibility(View.VISIBLE);
-
                     ConversationsListFragment.this.fetching = false;
                 } catch (JSONException e) {
                     // Something went wrong
@@ -211,16 +215,20 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         });
     }
 
+    /**
+     * Initiate the finding of a human.
+     * @param v The view in which this was initiated.
+     */
     private void findHuman(View v) {
         // Show loading and start timer
         this.findProgress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
 
         this.startTime = System.currentTimeMillis();
 
-        String url = "conversations/?user_id=";
-        url += HumansRestClient.instance().getUserId();
+        RequestParams params = new RequestParams();
+        params.put("user_id", HumansRestClient.instance().getUserId());
 
-        HumansRestClient.instance().post(url, null, new JsonHttpResponseHandler() {
+        HumansRestClient.instance().post("conversations", params, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -228,6 +236,8 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                     String jsonConversations = response.get("conversation").toString();
                     Gson gson = new Gson();
                     final Conversation conversation = gson.fromJson(jsonConversations, Conversation.class);
+
+                    ((HumansActivity)getActivity()).getDataStore().addConversation(conversation);
 
                     if (System.currentTimeMillis()-startTime > FIND_TIME_OUT) {
                         openConversation(conversation);
@@ -254,6 +264,10 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         });
     }
 
+    /**
+     * Displays an error after a amount of time has passed.
+     * @param screenError Should a full screen error show or a toast.
+     */
     private void delayedFindError(final boolean screenError) {
         if (System.currentTimeMillis()-startTime > FIND_TIME_OUT) {
             findError();
@@ -274,16 +288,26 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         }
     }
 
+    /**
+     * Displays a toast with an error.
+     */
     private void findError() {
         findProgress.dismiss();
         Toast.makeText(getActivity(), "The human found was no good. Try Again",
                 Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Displays a full screen error.
+     */
     private void showError() {
         if (findProgress != null) {
             findProgress.dismiss();
         }
+
+        content.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        empty.setVisibility(View.GONE);
 
         error.setVisibility(View.VISIBLE);
         error.setOnClickListener(new View.OnClickListener() {
@@ -294,6 +318,9 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         });
     }
 
+    /**
+     * Initiates a new attempt of loading conversations.
+     */
     private void retry() {
         error.setVisibility(View.GONE);
         error.setOnClickListener(null);
@@ -301,6 +328,10 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         loadConversations();
     }
 
+    /**
+     * Opens a conversation in the conversation fragment.
+     * @param conversation The conversation to open.
+     */
     private void openConversation(Conversation conversation) {
         if (findProgress != null) {
             findProgress.dismiss();
@@ -360,7 +391,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                ((ConversationsAdapter)((HeaderViewListAdapter)list.getAdapter()).getWrappedAdapter()).clear();
+                adapter.clear();
                 this.page = 1;
                 this.complete = false;
                 loadConversations();
@@ -374,30 +405,33 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Given a conversation, leaves that conversation.
+     * @param conversation The conversation to leave.
+     */
     private void leaveConversation(Conversation conversation) {
-        StringBuilder url = new StringBuilder();
-        url.append("conversations/leave?user_id=");
-        url.append(HumansRestClient.instance().getUserId());
-        url.append("&conversation_id=");
-        url.append(conversation.getId());
+        RequestParams params = new RequestParams();
+        params.put("user_id", HumansRestClient.instance().getUserId());
+        params.put("conversation_id", conversation.getId());
 
-        HumansRestClient.instance().put(url.toString(), null, new JsonHttpResponseHandler() {
+        final Conversation c = conversation;
+        HumansRestClient.instance().put("conversations/leave", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // Flash something here
+                ((HumansActivity)getActivity()).getDataStore().removeConversation(c);
+                adapter.notifyDataSetChanged();
+
+                if(adapter.getCount() == 0) {
+                    list.setVisibility(View.GONE);
+                    empty.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                // Flash something here
+                Toast.makeText(getActivity(), "Could not leave this human. Try Again",
+                        Toast.LENGTH_LONG).show();
             }
         });
-
-        adapter.remove(conversation);
-
-        if(adapter.getCount() == 0) {
-            empty.setVisibility(View.VISIBLE);
-            list.setVisibility(View.GONE);
-        }
     }
 }

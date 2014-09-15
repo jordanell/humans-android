@@ -293,6 +293,7 @@ public class ConversationFragment extends Fragment {
         HumansRestClient.instance().put(url.toString(), null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                ((HumansActivity)getActivity()).getDataStore().removeConversation(conversationId);
                 getActivity().onBackPressed();
             }
 

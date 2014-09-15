@@ -34,11 +34,9 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
         super.add(conversation);
     }
 
-    public void remove(Conversation conversation) {
-        this.conversations.remove(conversation);
-        this.notifyDataSetChanged();
-    }
-
+    /**
+     * Clear the conversations used in the adapter.
+     */
     public void clear() {
         this.conversations.clear();
         this.notifyDataSetChanged();

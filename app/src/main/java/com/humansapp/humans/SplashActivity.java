@@ -18,6 +18,7 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // Create handler for delayed transition
         new Handler().postDelayed(new Runnable() {
 
             @Override
