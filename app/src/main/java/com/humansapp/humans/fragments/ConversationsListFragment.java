@@ -53,7 +53,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     private ListView list;
     private LinearLayout progress;
     private RelativeLayout loading;
-    private RelativeLayout content;
     private TextView empty;
     private RelativeLayout error;
     private ProgressDialog findProgress;
@@ -79,7 +78,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         // Get all the layout variables
         loading = (RelativeLayout) view.findViewById(R.id.loading);
         error = (RelativeLayout) view.findViewById(R.id.error);
-        content = (RelativeLayout) view.findViewById(R.id.content);
         empty = (TextView) view.findViewById(R.id.empty);
         list = (ListView) view.findViewById(R.id.conversations_list);
 
@@ -92,13 +90,11 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         //Load the conversations if needed
         if(getArguments() != null && getArguments().getBoolean("new")) {
             loading.setVisibility(View.GONE);
-            content.setVisibility(View.VISIBLE);
             empty.setVisibility(View.VISIBLE);
         } else if (adapter.getCount() == 0) {
             loadConversations();
         } else {
             list.setAdapter(adapter);
-            content.setVisibility(View.VISIBLE);
             list.setVisibility(View.VISIBLE);
         }
 
@@ -150,7 +146,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             // Show we are loading something for the first time
             loading.setVisibility(View.VISIBLE);
             error.setVisibility(View.GONE);
-            content.setVisibility(View.GONE);
             empty.setVisibility(View.GONE);
             list.setVisibility(View.GONE);
         }
@@ -181,7 +176,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
                     adapter.addAll(cList);
 
-                    content.setVisibility(View.VISIBLE);
                     if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
@@ -253,34 +247,32 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                         handler.postDelayed(delayedOpen, FIND_TIME_OUT - (System.currentTimeMillis()-startTime));
                     }
                 } catch (JSONException e) {
-                    delayedFindError(false);
+                    delayedFindError("The human found was no good, try again");
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                delayedFindError(true);
+                delayedFindError("Robots failed finding a human, try again.");
             }
         });
     }
 
     /**
      * Displays an error after a amount of time has passed.
-     * @param screenError Should a full screen error show or a toast.
+     * @param toastMessage The message to be displayed in the error toast.
      */
-    private void delayedFindError(final boolean screenError) {
+    private void delayedFindError(String toastMessage) {
         if (System.currentTimeMillis()-startTime > FIND_TIME_OUT) {
-            findError();
+            findError(toastMessage);
         } else {
+            final String message = toastMessage;
+
             Handler handler = new Handler();
             Runnable delayedOpen = new Runnable() {
                 @Override
                 public void run() {
-                    if (screenError) {
-                        showError();
-                    } else {
-                        findError();
-                    }
+                    findError(message);
                 }
             };
 
@@ -290,10 +282,11 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
     /**
      * Displays a toast with an error.
+     * @param toastMessage The message to be displayed in the error toast.
      */
-    private void findError() {
+    private void findError(String toastMessage) {
         findProgress.dismiss();
-        Toast.makeText(getActivity(), "The human found was no good. Try Again",
+        Toast.makeText(getActivity(), toastMessage,
                 Toast.LENGTH_LONG).show();
     }
 
@@ -305,7 +298,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             findProgress.dismiss();
         }
 
-        content.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         empty.setVisibility(View.GONE);
 
