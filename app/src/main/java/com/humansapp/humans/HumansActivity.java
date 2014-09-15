@@ -14,18 +14,26 @@ import android.view.MenuItem;
 import com.humansapp.humans.fragments.ConversationsListFragment;
 import com.humansapp.humans.fragments.UserSetupFragment;
 import com.humansapp.humans.rest.HumansRestClient;
+import com.humansapp.humans.stores.DataStore;
 
 /**
  * Created by jordan on 2014-08-18.
  */
 public class HumansActivity extends ActionBarActivity {
 
+    DataStore dataStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Create data store
+        dataStore = new DataStore();
+
+        // Set View
         setContentView(R.layout.activity_humans);
 
+        // Setup user and go to correct fragment
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
         String userId = prefs.getString("userId", null);
         if(userId == null) {
@@ -94,5 +102,9 @@ public class HumansActivity extends ActionBarActivity {
                     .replace(R.id.content_frame, fragment)
                     .commitAllowingStateLoss();
         }
+    }
+
+    public DataStore getDataStore() {
+        return dataStore;
     }
 }

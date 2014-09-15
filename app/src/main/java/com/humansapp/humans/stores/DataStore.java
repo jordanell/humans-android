@@ -32,6 +32,10 @@ public class DataStore {
         return messages;
     }
 
+    public ArrayList<Message> getMessages(String conversationId) {
+        return messages.get(conversationId);
+    }
+
     public void setMessages(HashMap<String, ArrayList<Message>> messages) {
         this.messages = messages;
     }
@@ -63,7 +67,7 @@ public class DataStore {
     }
 
     public void addConversations(ArrayList<Conversation> conversations) {
-        conversations.addAll(conversations);
+        this.conversations.addAll(conversations);
     }
 
     public void removeConversation(Conversation conversation) {
