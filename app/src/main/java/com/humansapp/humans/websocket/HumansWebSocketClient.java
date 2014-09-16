@@ -2,6 +2,9 @@ package com.humansapp.humans.websocket;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.humansapp.humans.HumansActivity;
+import com.humansapp.humans.models.Message;
 import com.humansapp.humans.rest.HumansRestClient;
 
 import org.java_websocket.client.WebSocketClient;
@@ -18,23 +21,26 @@ import java.net.URISyntaxException;
 public class HumansWebSocketClient {
     private static HumansWebSocketClient instance = null;
 
+    private HumansActivity activity;
+
     private String baseURL;
     private WebSocketClient webSocketClient;
 
     /**
      * Instantiates a new HumansWebSocketClient
      */
-    protected HumansWebSocketClient() {
+    protected HumansWebSocketClient(HumansActivity activity) {
         this.baseURL = "ws://192.168.0.104:8080";
+        this.activity = activity;
     }
 
     /**
      * Returns a singleton instance of the HumansWebSocketClient
      * @return HumansWebSocketClient.
      */
-    public static HumansWebSocketClient instance() {
+    public static HumansWebSocketClient instance(HumansActivity activity) {
         if (instance == null) {
-            instance = new HumansWebSocketClient();
+            instance = new HumansWebSocketClient(activity);
         }
 
         return instance;
@@ -68,7 +74,21 @@ public class HumansWebSocketClient {
 
             @Override
             public void onMessage(String s) {
+                try {
+                    JSONObject json = new JSONObject(s);
+                    Gson gson = new Gson();
 
+                    String body = (String)json.get("body");
+
+                    if (body != null) {
+                        // We have a new message!
+                        Message message = gson.fromJson(s, Message.class);
+                        activity.getDataStore().addNewMessage(message.getConversationId(), message);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
             }
 
             @Override

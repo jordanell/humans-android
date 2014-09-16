@@ -38,4 +38,23 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/system_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/smessage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:text="My message would go here"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
+
+    </LinearLayout>
+
 </LinearLayout>

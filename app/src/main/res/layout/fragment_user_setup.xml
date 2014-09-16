@@ -79,6 +79,14 @@
                 android:layout_marginBottom="20dp"
                 android:text="Welcome"/>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                android:src="@drawable/robot_blue_happy"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

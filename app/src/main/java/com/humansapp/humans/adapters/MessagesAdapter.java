@@ -16,6 +16,8 @@ import com.humansapp.humans.models.Message;
 import com.humansapp.humans.rest.HumansRestClient;
 import com.ocpsoft.pretty.time.PrettyTime;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -64,6 +66,22 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
             view = convertView;
         }
 
+        // Is it a system message?
+        boolean systemMessage = (message.getUserId() == null);
+        if (systemMessage) {
+            LinearLayout systemWrapper = (LinearLayout) view.findViewById(R.id.system_message);
+            systemWrapper.setVisibility(View.VISIBLE);
+
+            TextView tv = (TextView) view.findViewById(R.id.smessage);
+            tv.setText(message.getBody());
+
+            LinearLayout background = (LinearLayout) view.findViewById(R.id.background_wrapper);
+            background.setVisibility(View.GONE);
+
+            return view;
+        }
+
+        // Deal with a user message
         boolean myMessage = (HumansRestClient.instance().getUserId().equals(message.getUserId()));
 
         LinearLayout container = (LinearLayout) view.findViewById(R.id.message_container);

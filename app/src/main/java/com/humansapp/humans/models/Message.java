@@ -12,6 +12,7 @@ public class Message implements Comparable<Message> {
     private String userId;
     private String name;
     private String body;
+    private String conversationId;
     private String created;
 
     public Message() {
@@ -41,4 +42,6 @@ public class Message implements Comparable<Message> {
     public String getUserId() { return this.userId; }
 
     public String getId() { return this.id; }
+
+    public String getConversationId() { return this.conversationId; }
 }

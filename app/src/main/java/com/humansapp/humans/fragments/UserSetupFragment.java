@@ -15,6 +15,7 @@ import com.humansapp.humans.HumansActivity;
 import com.humansapp.humans.R;
 import com.humansapp.humans.models.User;
 import com.humansapp.humans.rest.HumansRestClient;
+import com.humansapp.humans.websocket.HumansWebSocketClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -87,6 +88,9 @@ public class UserSetupFragment extends Fragment {
 
                     // Place user id in rest client
                     HumansRestClient.instance().setUserId(user.getId());
+
+                    // Connect the socket
+                    HumansWebSocketClient.instance((HumansActivity)getActivity()).connectSocket();
 
                     setupComplete = true;
 

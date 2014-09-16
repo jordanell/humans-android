@@ -46,7 +46,7 @@ public class HumansActivity extends ActionBarActivity {
             HumansRestClient.instance().setUserId(userId);
 
             // Connect the socket
-            HumansWebSocketClient.instance().connectSocket();
+            HumansWebSocketClient.instance(this).connectSocket();
 
             // Go directly to conversations fragment
             ConversationsListFragment conversations = new ConversationsListFragment();
