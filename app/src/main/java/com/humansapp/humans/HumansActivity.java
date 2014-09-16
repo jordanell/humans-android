@@ -15,6 +15,7 @@ import com.humansapp.humans.fragments.ConversationsListFragment;
 import com.humansapp.humans.fragments.UserSetupFragment;
 import com.humansapp.humans.rest.HumansRestClient;
 import com.humansapp.humans.stores.DataStore;
+import com.humansapp.humans.websocket.HumansWebSocketClient;
 
 /**
  * Created by jordan on 2014-08-18.
@@ -43,6 +44,9 @@ public class HumansActivity extends ActionBarActivity {
         } else {
             // Setup the user id
             HumansRestClient.instance().setUserId(userId);
+
+            // Connect the socket
+            HumansWebSocketClient.instance().connectSocket();
 
             // Go directly to conversations fragment
             ConversationsListFragment conversations = new ConversationsListFragment();
