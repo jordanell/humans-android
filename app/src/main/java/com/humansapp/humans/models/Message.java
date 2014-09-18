@@ -19,9 +19,10 @@ public class Message {
 
     }
 
-    public Message(String userId, String body) {
+    public Message(String conversationId, String userId, String body) {
         this.userId = userId;
         this.body = body;
+        this.created = new Date().toString();
     }
 
     public Date getCreated() {

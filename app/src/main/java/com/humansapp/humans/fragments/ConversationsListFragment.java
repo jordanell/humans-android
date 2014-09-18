@@ -82,22 +82,19 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         list = (ListView) view.findViewById(R.id.conversations_list);
 
         // Set up the conversation list adapter
-        if(adapter == null) {
-            adapter = new ConversationsAdapter(getActivity(), ((HumansActivity)getActivity()).getDataStore().getConversations());
-            list.setAdapter(adapter);
-        }
+        adapter = ((HumansActivity)getActivity()).getDataStore().getConversationsAdapter();
+        list.setAdapter(adapter);
 
         //Load the conversations if needed
         if(getArguments() != null && getArguments().getBoolean("new")) {
-            loading.setVisibility(View.GONE);
             empty.setVisibility(View.VISIBLE);
         } else if (adapter.getCount() == 0) {
             loadConversations();
         } else {
-            list.setAdapter(adapter);
             list.setVisibility(View.VISIBLE);
         }
 
+        // Set button listener
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +102,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             }
         });
 
+        // Set list click listener
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -142,7 +140,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
      * Load the conversations for the current page.
      */
     private void loadConversations() {
-        if (list.getAdapter().getCount() == 0) {
+        if (page == 1) {
             // Show we are loading something for the first time
             loading.setVisibility(View.VISIBLE);
             error.setVisibility(View.GONE);
@@ -174,7 +172,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                         ConversationsListFragment.this.complete = true;
                     }
 
-                    adapter.addAll(cList);
+                    ((HumansActivity)getActivity()).getDataStore().addConversations(cList);
 
                     if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
@@ -410,7 +408,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         HumansRestClient.instance().put("conversations/leave", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                ((HumansActivity)getActivity()).getDataStore().removeConversation(c);
+                ((HumansActivity)getActivity()).getDataStore().removeConversation(c.getId());
                 adapter.notifyDataSetChanged();
 
                 if(adapter.getCount() == 0) {

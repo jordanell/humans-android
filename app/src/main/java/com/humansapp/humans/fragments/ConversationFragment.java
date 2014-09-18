@@ -65,7 +65,7 @@ public class ConversationFragment extends Fragment {
         this.view = view;
 
         // Set up the adapter
-        adapter = new MessagesAdapter(getActivity(), new ArrayList<Message>());
+        adapter = ((HumansActivity)getActivity()).getDataStore().getMessageAdapter(getArguments().getString("id", null));
         addScrollListener();
 
         // Setup the caret on the action bar
@@ -145,10 +145,12 @@ public class ConversationFragment extends Fragment {
             }
         });
 
-        input.setText("");
-        adapter.add(new Message(HumansRestClient.instance().getUserId(), message));
+        Message messageObj = new Message(conversationId, HumansRestClient.instance().getUserId(), message);
+        ((HumansActivity)getActivity()).getDataStore().addMessage(conversationId, messageObj);
+
         empty.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
+        input.setText("");
 
     }
 

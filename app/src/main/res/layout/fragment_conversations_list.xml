@@ -94,6 +94,7 @@
 
         </RelativeLayout>
 
+        <!-- List -->
         <ListView
             android:id="@+id/conversations_list"
             android:layout_width="fill_parent"
@@ -104,6 +105,7 @@
             android:layout_above="@+id/btn_find"
             android:visibility="gone"/>
 
+        <!-- Empty -->
         <TextView
             android:id="@+id/empty"
             android:layout_width="fill_parent"
@@ -114,6 +116,7 @@
             android:text="You have no conversations"
             android:visibility="gone"/>
 
+        <!-- Find Button -->
         <Button
             android:id="@+id/btn_find"
             android:layout_width="match_parent"
