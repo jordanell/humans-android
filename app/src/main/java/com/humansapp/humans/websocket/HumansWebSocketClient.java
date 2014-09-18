@@ -83,14 +83,26 @@ public class HumansWebSocketClient {
 
                     if (type.equals("message")) {
                         // We have a new message!
-                        String data = (String)json.get("data");
-                        Message message = gson.fromJson(data, Message.class);
-                        activity.getDataStore().addMessage(message.getConversationId(), message);
+                        JSONObject data = json.getJSONObject("data");
+                        final Message message = gson.fromJson(data.toString(), Message.class);
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.getDataStore().addMessage(message.getConversationId(), message);
+                            }
+                        });
                     } else if (type.equals("conversation")) {
                         // We have a new conversation!
-                        String data = (String)json.get("data");
-                        Conversation conversation = gson.fromJson(data, Conversation.class);
-                        activity.getDataStore().addConversation(conversation);
+                        JSONObject data = json.getJSONObject("data");
+                        final Conversation conversation = gson.fromJson(data.toString(), Conversation.class);
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.getDataStore().addConversation(conversation);
+                            }
+                        });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
