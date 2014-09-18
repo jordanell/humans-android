@@ -45,7 +45,7 @@ public class DataStore {
      */
     public void addConversation(Conversation conversation) {
         conversationsAdapter.add(conversation);
-        conversationsAdapter.notifyDataSetChanged();
+        conversationsAdapter.sort();
     }
 
     /**
@@ -54,7 +54,7 @@ public class DataStore {
      */
     public void addConversations(ArrayList<Conversation> conversations) {
         conversationsAdapter.addAll(conversations);
-        conversationsAdapter.notifyDataSetChanged();
+        conversationsAdapter.sort();
     }
 
     /**
@@ -73,7 +73,7 @@ public class DataStore {
 
         if (c != null) {
             conversationsAdapter.remove(c);
-            conversationsAdapter.notifyDataSetChanged();
+            conversationsAdapter.sort();
         }
     }
 
@@ -88,6 +88,7 @@ public class DataStore {
 
         if (adapter == null) {
             adapter = new MessagesAdapter(activity, new ArrayList<Message>());
+            messageAdapters.put(conversationId, adapter);
         }
 
         return adapter;
@@ -101,13 +102,8 @@ public class DataStore {
     public void addMessage(String conversationId, Message message) {
         MessagesAdapter adapter = messageAdapters.get(conversationId);
 
-        if (adapter == null) {
-            adapter = new MessagesAdapter(activity, new ArrayList<Message>());
-        }
-
         adapter.add(message);
-        messageAdapters.put(conversationId, adapter);
-        adapter.notifyDataSetChanged();
+        adapter.sort();
     }
 
     /**
@@ -118,12 +114,7 @@ public class DataStore {
     public void addMessages(String conversationId, ArrayList<Message> messages) {
         MessagesAdapter adapter = messageAdapters.get(conversationId);
 
-        if (adapter == null) {
-            adapter = new MessagesAdapter(activity, new ArrayList<Message>());
-        }
-
         adapter.addAll(messages);
-        messageAdapters.put(conversationId, adapter);
-        adapter.notifyDataSetChanged();
+        adapter.sort();
     }
 }

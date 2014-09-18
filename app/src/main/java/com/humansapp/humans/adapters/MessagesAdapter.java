@@ -25,46 +25,20 @@ import java.util.Comparator;
  * Created by jordan on 2014-08-22.
  */
 public class MessagesAdapter extends ArrayAdapter<Message> {
-
-    ArrayList<Message> messages;
     Context context;
 
     public MessagesAdapter(Context context, ArrayList<Message> messages) {
         super(context, R.layout.list_item_message, messages);
         this.context = context;
-        this.messages = messages;
     }
 
-    @Override
-    public void add(Message message) {
-        super.add(message);
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        this.sort(new Comparator<Message>() {
+    public void sort() {
+        super.sort(new Comparator<Message>() {
             @Override
             public int compare(Message message, Message message2) {
                 return message.getCreated().compareTo(message2.getCreated());
             }
         });
-
-        super.notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return this.messages.size();
-    }
-
-    @Override
-    public Message getItem(int position) {
-        return this.messages.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     @Override

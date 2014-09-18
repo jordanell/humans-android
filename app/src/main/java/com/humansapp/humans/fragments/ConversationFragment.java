@@ -91,6 +91,8 @@ public class ConversationFragment extends Fragment {
         this.empty = (TextView) view.findViewById(R.id.empty);
         this.error = (RelativeLayout) view.findViewById(R.id.error);
 
+        list.setAdapter(adapter);
+
         // Set up the auto scrolling
         list.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
@@ -151,7 +153,6 @@ public class ConversationFragment extends Fragment {
         empty.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         input.setText("");
-
     }
 
     private void loadMessages() {
@@ -173,13 +174,11 @@ public class ConversationFragment extends Fragment {
                     Gson gson = new Gson();
                     Message[] messages = gson.fromJson(jsonMessages, Message[].class);
 
-                    MessagesAdapter ad = new MessagesAdapter(getActivity(), new ArrayList<Message>(Arrays.asList(messages)));
+                    ((HumansActivity)getActivity()).getDataStore().addMessages(conversationId, new ArrayList<Message>(Arrays.asList(messages)));
 
-                    adapter = ad;
-                    list.setAdapter(adapter);
                     addScrollListener();
 
-                    if(ad.getCount() == 0) {
+                    if(adapter.getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
                         list.setVisibility(View.VISIBLE);
@@ -255,7 +254,7 @@ public class ConversationFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                list.setAdapter(null);
+                adapter.clear();
                 loadMessages();
                 break;
             case R.id.action_leave:

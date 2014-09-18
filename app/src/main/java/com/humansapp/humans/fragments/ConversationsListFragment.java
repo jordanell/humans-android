@@ -140,13 +140,11 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
      * Load the conversations for the current page.
      */
     private void loadConversations() {
-        if (page == 1) {
-            // Show we are loading something for the first time
-            loading.setVisibility(View.VISIBLE);
-            error.setVisibility(View.GONE);
-            empty.setVisibility(View.GONE);
-            list.setVisibility(View.GONE);
-        }
+        // Show we are loading something for the first time
+        loading.setVisibility(View.VISIBLE);
+        error.setVisibility(View.GONE);
+        empty.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
 
         // Set the infinite scroll to loading
         this.fetching = true;
