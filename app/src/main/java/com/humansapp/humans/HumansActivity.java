@@ -29,7 +29,7 @@ public class HumansActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         // Create data store
-        dataStore = new DataStore();
+        dataStore = new DataStore(this);
 
         // Set content view
         setContentView(R.layout.activity_humans);

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
+import com.humansapp.humans.models.Conversation;
 import com.humansapp.humans.models.Message;
 import com.humansapp.humans.rest.HumansRestClient;
 
@@ -78,12 +79,18 @@ public class HumansWebSocketClient {
                     JSONObject json = new JSONObject(s);
                     Gson gson = new Gson();
 
-                    String body = (String)json.get("body");
+                    String type = (String)json.get("type");
 
-                    if (body != null) {
+                    if (type.equals("message")) {
                         // We have a new message!
-                        Message message = gson.fromJson(s, Message.class);
-                        activity.getDataStore().addNewMessage(message.getConversationId(), message);
+                        String data = (String)json.get("data");
+                        Message message = gson.fromJson(data, Message.class);
+                        activity.getDataStore().addMessage(message.getConversationId(), message);
+                    } else if (type.equals("conversation")) {
+                        // We have a new conversation!
+                        String data = (String)json.get("data");
+                        Conversation conversation = gson.fromJson(data, Conversation.class);
+                        activity.getDataStore().addConversation(conversation);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

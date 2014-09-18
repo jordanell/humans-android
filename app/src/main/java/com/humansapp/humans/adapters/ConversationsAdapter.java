@@ -14,6 +14,7 @@ import com.humansapp.humans.models.Message;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by jordan on 2014-08-14.
@@ -32,6 +33,18 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
     @Override
     public void add(Conversation conversation) {
         super.add(conversation);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        this.sort(new Comparator<Conversation>() {
+            @Override
+            public int compare(Conversation conversation, Conversation conversation2) {
+                return conversation.getUpdated().compareTo(conversation2.getUpdated());
+            }
+        });
+
+        super.notifyDataSetChanged();
     }
 
     /**

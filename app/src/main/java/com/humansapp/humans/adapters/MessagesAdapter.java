@@ -19,6 +19,7 @@ import com.ocpsoft.pretty.time.PrettyTime;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by jordan on 2014-08-22.
@@ -37,6 +38,18 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
     @Override
     public void add(Message message) {
         super.add(message);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        this.sort(new Comparator<Message>() {
+            @Override
+            public int compare(Message message, Message message2) {
+                return message.getCreated().compareTo(message2.getCreated());
+            }
+        });
+
+        super.notifyDataSetChanged();
     }
 
     @Override

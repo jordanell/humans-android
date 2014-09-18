@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by jordan on 2014-08-14.
  */
-public class Conversation extends Model implements Comparable<Conversation> {
+public class Conversation {
     private String id;
     private String[] userIds;
     private String name;
@@ -17,10 +17,6 @@ public class Conversation extends Model implements Comparable<Conversation> {
 
     public Conversation() {
 
-    }
-
-    public int compareTo(Conversation c) {
-        return getUpdated().compareTo(c.getUpdated());
     }
 
     public String getLastMessage() {
