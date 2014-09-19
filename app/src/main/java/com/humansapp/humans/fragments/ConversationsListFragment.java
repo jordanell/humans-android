@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -407,7 +406,6 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 ((HumansActivity)getActivity()).getDataStore().removeConversation(c.getId());
-                adapter.notifyDataSetChanged();
 
                 if(adapter.getCount() == 0) {
                     list.setVisibility(View.GONE);
