@@ -3,6 +3,7 @@ package com.humansapp.humans.fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -131,6 +132,18 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
         // Set up the conversations context menu
         registerForContextMenu(list);
+
+        // Set up the observer for conversations
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                if (adapter.getCount() > 0) {
+                    empty.setVisibility(View.GONE);
+                    list.setVisibility(View.VISIBLE);
+                }
+                super.onChanged();
+            }
+        });
 
         return view;
     }

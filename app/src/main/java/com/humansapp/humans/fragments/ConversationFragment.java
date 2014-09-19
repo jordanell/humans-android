@@ -105,6 +105,18 @@ public class ConversationFragment extends Fragment {
             }
         });
 
+        // Set up the observer for conversations
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                if (adapter.getCount() > 0) {
+                    empty.setVisibility(View.GONE);
+                    list.setVisibility(View.VISIBLE);
+                }
+                super.onChanged();
+            }
+        });
+
         loadMessages();
 
         return view;

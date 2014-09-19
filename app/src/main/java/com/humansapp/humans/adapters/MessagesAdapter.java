@@ -66,6 +66,12 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
             background.setVisibility(View.GONE);
 
             return view;
+        } else {
+            LinearLayout systemWrapper = (LinearLayout) view.findViewById(R.id.system_message);
+            systemWrapper.setVisibility(View.GONE);
+
+            LinearLayout background = (LinearLayout) view.findViewById(R.id.background_wrapper);
+            background.setVisibility(View.VISIBLE);
         }
 
         // Deal with a user message
@@ -83,17 +89,35 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
 
             params.setMargins(250, 0, 0, 0);
             background.setLayoutParams(params);
+        } else {
+            container.setGravity(Gravity.LEFT);
+            background.setBackgroundResource(R.drawable.other_sent_bubble);
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            params.setMargins(0, 0, 250, 0);
+            background.setLayoutParams(params);
         }
 
         TextView tv = (TextView) view.findViewById(R.id.message);
         tv.setText(message.getBody());
 
+        if(myMessage) {
+            tv.setGravity(Gravity.RIGHT);
+        } else {
+            tv.setGravity(Gravity.LEFT);
+        }
+
         tv = (TextView) view.findViewById(R.id.pretty_date);
         PrettyTime p = new PrettyTime();
         String date = p.format(message.getCreated());
         tv.setText(date);
+
         if(myMessage) {
             tv.setGravity(Gravity.RIGHT);
+        } else {
+            tv.setGravity(Gravity.LEFT);
         }
 
         return view;
