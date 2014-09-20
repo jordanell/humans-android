@@ -108,9 +108,11 @@ public class DataStore {
                     Conversation c = conversationsAdapter.getItem(i);
 
                     if (c.getId().equals((cId))) {
-                        Message lastMessage = ad.getItem(ad.getCount()-1);
-                        c.setLastMessage(lastMessage);
-                        conversationsAdapter.sort();
+                        if (ad.getCount() > 0) {
+                            Message lastMessage = ad.getItem(ad.getCount()-1);
+                            c.setLastMessage(lastMessage);
+                            conversationsAdapter.sort();
+                        }
                         break;
                     }
                 }
