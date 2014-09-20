@@ -41,6 +41,10 @@ public class Message implements Comparable<Message> {
         return dateTime.toDate();
     }
 
+    public String getCreatedString() {
+        return this.created;
+    }
+
     public String getName() {
         return this.name;
     }

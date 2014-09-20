@@ -1,5 +1,7 @@
 package com.humansapp.humans.stores;
 
+import android.database.DataSetObserver;
+
 import com.humansapp.humans.HumansActivity;
 import com.humansapp.humans.adapters.ConversationsAdapter;
 import com.humansapp.humans.adapters.MessagesAdapter;
@@ -83,13 +85,39 @@ public class DataStore {
      * @param conversationId The conversation to find messages of.
      * @return The message adapter.
      */
-    public MessagesAdapter getMessageAdapter(String conversationId) {
+    public MessagesAdapter getMessageAdapter(final String conversationId) {
         MessagesAdapter adapter = messageAdapters.get(conversationId);
 
         if (adapter == null) {
-            adapter = new MessagesAdapter(activity, new ArrayList<Message>());
-            messageAdapters.put(conversationId, adapter);
+            adapter = createMessageAdapter(conversationId);
         }
+
+        return adapter;
+    }
+
+    private MessagesAdapter createMessageAdapter(String conversationId) {
+        MessagesAdapter adapter = new MessagesAdapter(activity, new ArrayList<Message>());
+
+        final MessagesAdapter ad = adapter;
+        final String cId = conversationId;
+
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                for (int i=-0; i < conversationsAdapter.getCount(); i++) {
+                    Conversation c = conversationsAdapter.getItem(i);
+
+                    if (c.getId().equals((cId))) {
+                        Message lastMessage = ad.getItem(ad.getCount()-1);
+                        c.setLastMessage(lastMessage);
+                        conversationsAdapter.sort();
+                        break;
+                    }
+                }
+                super.onChanged();
+            }
+        });
+        messageAdapters.put(conversationId, adapter);
 
         return adapter;
     }
@@ -102,6 +130,10 @@ public class DataStore {
     public void addMessage(String conversationId, Message message) {
         MessagesAdapter adapter = messageAdapters.get(conversationId);
 
+        if (adapter == null) {
+            adapter = createMessageAdapter(conversationId);
+        }
+
         adapter.add(message);
         adapter.sort();
     }
@@ -113,6 +145,10 @@ public class DataStore {
      */
     public void addMessages(String conversationId, ArrayList<Message> messages) {
         MessagesAdapter adapter = messageAdapters.get(conversationId);
+
+        if (adapter == null) {
+            adapter = createMessageAdapter(conversationId);
+        }
 
         adapter.addAll(messages);
         adapter.sort();

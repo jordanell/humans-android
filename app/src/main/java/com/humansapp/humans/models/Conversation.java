@@ -31,6 +31,11 @@ public class Conversation implements Comparable<Conversation> {
         }
     }
 
+    public void setLastMessage(Message message) {
+        this.lastMessage = message.getBody();
+        this.updated = message.getCreatedString();
+    }
+
     public String getName() {
         return this.name;
     }

@@ -32,7 +32,7 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
         super.sort(new Comparator<Conversation>() {
             @Override
             public int compare(Conversation conversation, Conversation conversation2) {
-                return conversation.getUpdated().compareTo(conversation2.getUpdated());
+                return conversation2.getUpdated().compareTo(conversation.getUpdated());
             }
         });
     }
