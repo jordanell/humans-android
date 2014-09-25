@@ -33,7 +33,7 @@
 
         <CheckBoxPreference
             android:key="message_vibrate"
-            android:title="Vibrate"
+            android:title="Always Vibrate"
             android:defaultValue="true" />
 
         <CheckBoxPreference
