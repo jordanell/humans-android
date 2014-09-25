@@ -61,16 +61,8 @@ public class ConversationFragment extends InifiniteScrollFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
 
-        // Setup the caret on the action bar
-        getActivity().getActionBar().setHomeButtonEnabled(true);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Setup the name on the action bar
-        String name = getArguments().getString("name", null);
-        if(name != null) {
-            this.name = name;
-            getActivity().getActionBar().setTitle(name);
-        }
+        // Setup the action bar
+        setActionBar();
 
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
         this.view = view;
@@ -139,6 +131,25 @@ public class ConversationFragment extends InifiniteScrollFragment {
         loadMessages(true);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setActionBar();
+    }
+
+    private void setActionBar() {
+        // Setup the caret on the action bar
+        getActivity().getActionBar().setHomeButtonEnabled(true);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Setup the name on the action bar
+        String name = getArguments().getString("name", null);
+        if(name != null) {
+            this.name = name;
+            getActivity().getActionBar().setTitle(name);
+        }
     }
 
     private void sendMessage() {
