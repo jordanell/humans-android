@@ -42,7 +42,7 @@ import java.util.Arrays;
 /**
  * Created by jordan on 2014-08-18.
  */
-public class ConversationFragment extends Fragment {
+public class ConversationFragment extends InifiniteScrollFragment {
     private String conversationId;
     private String name;
 
@@ -61,35 +61,29 @@ public class ConversationFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
 
-        View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-        this.view = view;
-
-        // Set up the adapter
-        adapter = ((HumansActivity)getActivity()).getDataStore().getMessageAdapter(getArguments().getString("id", null));
-        addScrollListener();
-
         // Setup the caret on the action bar
         getActivity().getActionBar().setHomeButtonEnabled(true);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Setup the ID
-        String id = getArguments().getString("id", null);
-        if(id != null) {
-            this.conversationId = id;
-        }
-
-        // Setup the name
+        // Setup the name on the action bar
         String name = getArguments().getString("name", null);
         if(name != null) {
             this.name = name;
             getActivity().getActionBar().setTitle(name);
         }
 
+        View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+        this.view = view;
+
         // Get view components
         this.loading = (RelativeLayout) view.findViewById(R.id.loading);
         this.list = (ListView) view.findViewById(R.id.list);
         this.empty = (TextView) view.findViewById(R.id.empty);
         this.error = (RelativeLayout) view.findViewById(R.id.error);
+
+        // Set up the adapter
+        adapter = ((HumansActivity)getActivity()).getDataStore().getMessageAdapter(getArguments().getString("id", null));
+        addScrollListener();
 
         list.setAdapter(adapter);
 
@@ -117,7 +111,13 @@ public class ConversationFragment extends Fragment {
             }
         });
 
-        loadMessages();
+        // Setup the ID
+        String id = getArguments().getString("id", null);
+        if(id != null) {
+            this.conversationId = id;
+        }
+
+        loadMessages(true);
 
         return view;
     }
@@ -130,24 +130,13 @@ public class ConversationFragment extends Fragment {
             return;
         }
 
-        String encodedMessage;
-        try {
-            encodedMessage = URLEncoder.encode(message, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // Handle this better
-            return;
+        RequestParams params = new RequestParams();
+        params.put("user_id", HumansRestClient.instance().getUserId());
+        params.put("page", this.page);
+        params.put("conversation_id", conversationId);
+        params.put("body", message);
 
-        }
-
-        StringBuilder url = new StringBuilder();
-        url.append("messages?user_id=");
-        url.append(HumansRestClient.instance().getUserId());
-        url.append("&conversation_id=");
-        url.append(conversationId);
-        url.append("&body=");
-        url.append(encodedMessage);
-
-        HumansRestClient.instance().post(url.toString(), null, new JsonHttpResponseHandler() {
+        HumansRestClient.instance().post("messages", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
@@ -155,7 +144,8 @@ public class ConversationFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                showError();
+                Toast.makeText(getActivity(), "Failed to message this human. Try Again",
+                        Toast.LENGTH_LONG).show();
             }
         });
 
@@ -167,11 +157,17 @@ public class ConversationFragment extends Fragment {
         input.setText("");
     }
 
-    private void loadMessages() {
-        // Show we are loading something
-        loading.setVisibility(View.VISIBLE);
-        list.setVisibility(View.GONE);
-        empty.setVisibility(View.GONE);
+    private void loadMessages(boolean reset) {
+        if (reset) {
+            // Reset the data store
+            ((HumansActivity)getActivity()).getDataStore().getMessageAdapter(conversationId).clear();
+
+            // Show we are loading something
+            loading.setVisibility(View.VISIBLE);
+            error.setVisibility(View.GONE);
+            list.setVisibility(View.GONE);
+            empty.setVisibility(View.GONE);
+        }
 
 
         RequestParams params = new RequestParams();
@@ -182,6 +178,8 @@ public class ConversationFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+                    ConversationFragment.this.fetching = false;
+
                     String jsonMessages = response.get("messages").toString();
                     Gson gson = new Gson();
                     Message[] messages = gson.fromJson(jsonMessages, Message[].class);
@@ -190,20 +188,23 @@ public class ConversationFragment extends Fragment {
 
                     addScrollListener();
 
+                    loading.setVisibility(View.GONE);
+                    error.setVisibility(View.GONE);
+
                     if(adapter.getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
                         list.setVisibility(View.VISIBLE);
                     }
-
-                    loading.setVisibility(View.GONE);
                 } catch (JSONException e) {
+                    ConversationFragment.this.fetching = false;
                     showError();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                ConversationFragment.this.fetching = false;
                 showError();
             }
         });
@@ -222,6 +223,7 @@ public class ConversationFragment extends Fragment {
     private void showError() {
         empty.setVisibility(View.GONE);
         loading.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
         error.setVisibility(View.VISIBLE);
 
         error.setOnClickListener(new View.OnClickListener() {
@@ -237,7 +239,7 @@ public class ConversationFragment extends Fragment {
 
         error.setOnClickListener(null);
 
-        loadMessages();
+        loadMessages(true);
     }
 
     @Override
@@ -267,7 +269,7 @@ public class ConversationFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 adapter.clear();
-                loadMessages();
+                loadMessages(true);
                 break;
             case R.id.action_leave:
                 leavePrompt();

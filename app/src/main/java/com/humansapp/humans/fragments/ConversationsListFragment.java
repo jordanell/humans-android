@@ -85,14 +85,8 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         adapter = ((HumansActivity)getActivity()).getDataStore().getConversationsAdapter();
         list.setAdapter(adapter);
 
-        //Load the conversations if needed
-        if(getArguments() != null && getArguments().getBoolean("new")) {
-            empty.setVisibility(View.VISIBLE);
-        } else if (adapter.getCount() == 0) {
-            loadConversations();
-        } else {
-            list.setVisibility(View.VISIBLE);
-        }
+        //Load the conversations
+        loadConversations(true);
 
         // Set button listener
         view.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
@@ -125,7 +119,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                         ConversationsListFragment.this.complete == false) {
                     System.out.println("Loading more");
                     ConversationsListFragment.this.page++;
-                    loadConversations();
+                    loadConversations(false);
                 }
             }
         });
@@ -151,17 +145,17 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
     /**
      * Load the conversations for the current page.
      */
-    private void loadConversations() {
-        // Show we are loading something for the first time
-        loading.setVisibility(View.VISIBLE);
-        error.setVisibility(View.GONE);
-        empty.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
+    private void loadConversations(boolean reset) {
+        if (reset) {
+            // Reset the data store
+            ((HumansActivity)getActivity()).getDataStore().getConversationsAdapter().clear();
 
-        // Set the infinite scroll to loading
-        this.fetching = true;
-        final ViewGroup footerView = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.list_footer, list, false);
-        list.addFooterView(footerView);
+            // Show we are loading something for the first time
+            loading.setVisibility(View.VISIBLE);
+            error.setVisibility(View.GONE);
+            empty.setVisibility(View.GONE);
+            list.setVisibility(View.GONE);
+        }
 
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
@@ -171,7 +165,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    list.removeFooterView(footerView);
+                    ConversationsListFragment.this.fetching = false;
 
                     String jsonConversations = response.get("conversations").toString();
                     Gson gson = new Gson();
@@ -184,6 +178,9 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
                     ((HumansActivity)getActivity()).getDataStore().addConversations(cList);
 
+                    loading.setVisibility(View.GONE);
+                    error.setVisibility(View.GONE);
+
                     if(list.getAdapter().getCount() == 0) {
                         empty.setVisibility(View.VISIBLE);
                     } else {
@@ -193,25 +190,15 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                     if (ConversationsListFragment.this.page == 1) {
                         list.setSelection(0);
                     }
-
-                    loading.setVisibility(View.GONE);
-                    ConversationsListFragment.this.fetching = false;
                 } catch (JSONException e) {
-                    // Something went wrong
                     ConversationsListFragment.this.fetching = false;
-                    list.removeFooterView(footerView);
                     showError();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                progress = (LinearLayout) view.findViewById(R.id.header_progress);
-                progress.setVisibility(View.GONE);
-
                 ConversationsListFragment.this.fetching = false;
-                list.removeFooterView(footerView);
-
                 showError();
             }
         });
@@ -223,8 +210,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
      */
     private void findHuman(View v) {
         // Show loading and start timer
-        this.findProgress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
-
+        findProgress = ProgressDialog.show(getActivity(), "Finding Human", "Please wait while our robots find humans", true);
         this.startTime = System.currentTimeMillis();
 
         RequestParams params = new RequestParams();
@@ -306,6 +292,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
             findProgress.dismiss();
         }
 
+        loading.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         empty.setVisibility(View.GONE);
 
@@ -325,7 +312,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
         error.setVisibility(View.GONE);
         error.setOnClickListener(null);
 
-        loadConversations();
+        loadConversations(true);
     }
 
     /**
@@ -394,7 +381,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
                 adapter.clear();
                 this.page = 1;
                 this.complete = false;
-                loadConversations();
+                loadConversations(true);
                 break;
             case R.id.action_settings:
                 SettingsFragment fragment = new SettingsFragment();
