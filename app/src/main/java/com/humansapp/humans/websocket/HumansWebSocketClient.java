@@ -1,5 +1,6 @@
 package com.humansapp.humans.websocket;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
+import com.humansapp.humans.fragments.ConversationFragment;
 import com.humansapp.humans.media.HumansMedia;
 import com.humansapp.humans.models.Conversation;
 import com.humansapp.humans.models.Message;
@@ -113,6 +115,14 @@ public class HumansWebSocketClient {
                         String alarm = prefs.getString("message_ringtone", "default ringtone");
                         Uri uri = Uri.parse(alarm);
                         HumansMedia.playAlert(activity, uri);
+
+                        // Update seen if we are in that conversation
+                        Fragment currentFragment = activity.getCurrentFragment();
+                        if (currentFragment instanceof ConversationFragment) {
+                            if (((ConversationFragment) currentFragment).getConversationId().equals(message.getConversationId())) {
+                                ((ConversationFragment) currentFragment).sendSeen();
+                            }
+                        }
 
                     } else if (type.equals("conversation")) {
                         // We have a new conversation!

@@ -242,7 +242,7 @@ public class ConversationFragment extends InifiniteScrollFragment {
         });
     }
 
-    private void sendSeen() {
+    public void sendSeen() {
         RequestParams params = new RequestParams();
         params.put("user_id", HumansRestClient.instance().getUserId());
         params.put("conversation_id", conversationId);
@@ -370,5 +370,9 @@ public class ConversationFragment extends InifiniteScrollFragment {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public String getConversationId() {
+        return this.conversationId;
     }
 }

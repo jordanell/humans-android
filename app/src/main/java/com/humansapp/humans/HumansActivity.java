@@ -23,6 +23,7 @@ import com.humansapp.humans.websocket.HumansWebSocketClient;
 public class HumansActivity extends ActionBarActivity {
 
     DataStore dataStore;
+    Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,8 @@ public class HumansActivity extends ActionBarActivity {
                     .replace(R.id.content_frame, fragment)
                     .commitAllowingStateLoss();
         }
+
+        currentFragment = fragment;
     }
 
     /**
@@ -119,5 +122,13 @@ public class HumansActivity extends ActionBarActivity {
      */
     public DataStore getDataStore() {
         return dataStore;
+    }
+
+    /**
+     * Return the current fragment being used in this activity.
+     * @return The fragment.
+     */
+    public Fragment getCurrentFragment() {
+        return currentFragment;
     }
 }
