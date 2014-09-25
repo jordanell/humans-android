@@ -1,6 +1,7 @@
 package com.humansapp.humans.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.humansapp.humans.R;
 import com.humansapp.humans.models.Conversation;
 import com.humansapp.humans.models.Message;
+import com.humansapp.humans.rest.HumansRestClient;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.util.ArrayList;
@@ -49,16 +51,24 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
             view = convertView;
         }
 
+        boolean hasSeen = conversation.hasSeen(HumansRestClient.instance().getUserId());
+
         TextView tv = (TextView) view.findViewById(R.id.last_message);
         tv.setText(conversation.getLastMessage());
+        if (!hasSeen)
+            tv.setTypeface(null, Typeface.BOLD);
 
         tv = (TextView) view.findViewById(R.id.conversation_title);
         tv.setText(conversation.getName());
+        if (!hasSeen)
+            tv.setTypeface(null, Typeface.BOLD);
 
         tv = (TextView) view.findViewById(R.id.pretty_date);
         PrettyTime p = new PrettyTime();
         String date = p.format(conversation.getUpdated());
         tv.setText(date);
+        if (!hasSeen)
+            tv.setTypeface(null, Typeface.BOLD);
 
 
         return view;

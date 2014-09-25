@@ -226,6 +226,8 @@ public class ConversationFragment extends InifiniteScrollFragment {
                     } else {
                         list.setVisibility(View.VISIBLE);
                     }
+
+                    sendSeen();
                 } catch (JSONException e) {
                     ConversationFragment.this.fetching = false;
                     showError();
@@ -236,6 +238,24 @@ public class ConversationFragment extends InifiniteScrollFragment {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
                 ConversationFragment.this.fetching = false;
                 showError();
+            }
+        });
+    }
+
+    private void sendSeen() {
+        RequestParams params = new RequestParams();
+        params.put("user_id", HumansRestClient.instance().getUserId());
+        params.put("conversation_id", conversationId);
+
+        HumansRestClient.instance().put("conversations/seen", params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+
             }
         });
     }

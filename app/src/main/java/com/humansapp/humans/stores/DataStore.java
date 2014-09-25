@@ -111,6 +111,7 @@ public class DataStore {
                         if (ad.getCount() > 0) {
                             Message lastMessage = ad.getItem(ad.getCount()-1);
                             c.setLastMessage(lastMessage);
+                            c.setHasSeen(new String[0]);
                             conversationsAdapter.sort();
                         }
                         break;

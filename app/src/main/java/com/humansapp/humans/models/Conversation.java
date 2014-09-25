@@ -12,6 +12,7 @@ public class Conversation implements Comparable<Conversation> {
     private String[] userIds;
     private String name;
     private String lastMessage;
+    private String[] seenIds;
     private String created;
     private String updated;
 
@@ -47,5 +48,23 @@ public class Conversation implements Comparable<Conversation> {
 
     public String getId() {
         return this.id;
+    }
+
+    public String[] getSeenIds() {
+        return this.seenIds;
+    }
+
+    public void setHasSeen(String[] seenIds) {
+        this.seenIds = seenIds;
+    }
+
+    public boolean hasSeen(String userId) {
+        for(int i = 0; i < seenIds.length; i++) {
+            if (seenIds[i].equals(userId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
