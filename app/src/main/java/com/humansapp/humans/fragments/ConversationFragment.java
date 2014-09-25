@@ -90,6 +90,25 @@ public class ConversationFragment extends InifiniteScrollFragment {
         // Set up the auto scrolling
         list.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
+        // Set infinite scroll listener
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                if ( i3 != 0 && (float)i / (float)i3 > 0.5f && ConversationFragment.this.fetching == false &&
+                        ConversationFragment.this.complete == false) {
+                    System.out.println("Loading more");
+                    ConversationFragment.this.page++;
+                    loadMessages(false);
+                }
+            }
+        });
+
         // Set the send listener
         Button send = (Button) view.findViewById(R.id.btn_send);
         send.setOnClickListener(new View.OnClickListener() {
@@ -269,6 +288,8 @@ public class ConversationFragment extends InifiniteScrollFragment {
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 adapter.clear();
+                this.page = 1;
+                this.complete = false;
                 loadMessages(true);
                 break;
             case R.id.action_leave:
