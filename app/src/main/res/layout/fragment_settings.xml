@@ -25,22 +25,20 @@
         android:title="Notifications"
         android:key="notifications_settings">
 
+        <RingtonePreference
+                     android:key="message_ringtone"
+                     android:title="Sound"
+                     android:ringtoneType="notification"
+                     android:defaultValue="content://settings/system/notification_sound" />
+
+        <CheckBoxPreference
+            android:key="message_vibrate"
+            android:title="Vibrate"
+            android:defaultValue="true" />
+
         <CheckBoxPreference
             android:key="push_notifications"
             android:title="Enable Push Notifications"
-            android:defaultValue="true" />
-
-        <RingtonePreference
-            android:dependency="push_notifications"
-            android:key="message_ringtone"
-            android:title="Ringtone Setting"
-            android:ringtoneType="notification"
-            android:defaultValue="content://settings/system/notification_sound" />
-
-        <CheckBoxPreference
-            android:dependency="push_notifications"
-            android:key="message_vibrate"
-            android:title="Vibrate"
             android:defaultValue="true" />
 
     </PreferenceCategory>

@@ -1,9 +1,19 @@
 package com.humansapp.humans.websocket;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Vibrator;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.humansapp.humans.HumansActivity;
+import com.humansapp.humans.media.HumansMedia;
 import com.humansapp.humans.models.Conversation;
 import com.humansapp.humans.models.Message;
 import com.humansapp.humans.rest.HumansRestClient;
@@ -92,6 +102,18 @@ public class HumansWebSocketClient {
                                 activity.getDataStore().addMessage(message.getConversationId(), message);
                             }
                         });
+
+                        // Vibrate the phone
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                        if (prefs.getBoolean("message_vibrate", true) || HumansMedia.getAudioManager(activity).getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+                            HumansMedia.vibrate(activity, 400);
+                        }
+
+                        // Play sound
+                        String alarm = prefs.getString("message_ringtone", "default ringtone");
+                        Uri uri = Uri.parse(alarm);
+                        HumansMedia.playAlert(activity, uri);
+
                     } else if (type.equals("conversation")) {
                         // We have a new conversation!
                         JSONObject data = json.getJSONObject("data");
