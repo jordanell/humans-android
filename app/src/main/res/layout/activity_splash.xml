@@ -11,6 +11,6 @@
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         android:layout_marginTop="40dp"
-        android:src="@drawable/humans_logo" />
+        android:src="@drawable/humans" />
 
 </RelativeLayout>

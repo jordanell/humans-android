@@ -11,7 +11,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/humans_logo"
+        android:icon="@drawable/ic_launcher_humans"
+        android:logo="@drawable/humans"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 

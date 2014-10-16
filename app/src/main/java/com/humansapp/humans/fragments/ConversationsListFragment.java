@@ -326,7 +326,7 @@ public class ConversationsListFragment extends InifiniteScrollFragment {
 
         Bundle b = new Bundle();
         b.putString("id", conversation.getId());
-        b.putString("name", conversation.getName());
+        b.putString("name", conversation.getName(HumansRestClient.instance().getUserId()));
 
         ConversationFragment fragment = new ConversationFragment();
         fragment.setArguments(b);

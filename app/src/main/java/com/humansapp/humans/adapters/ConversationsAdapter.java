@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.humansapp.humans.R;
@@ -18,6 +19,7 @@ import com.ocpsoft.pretty.time.PrettyTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * Created by jordan on 2014-08-14.
@@ -59,7 +61,7 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
             tv.setTypeface(null, Typeface.BOLD);
 
         tv = (TextView) view.findViewById(R.id.conversation_title);
-        tv.setText(conversation.getName());
+        tv.setText(conversation.getName(HumansRestClient.instance().getUserId()));
         if (!hasSeen)
             tv.setTypeface(null, Typeface.BOLD);
 
@@ -70,6 +72,11 @@ public class ConversationsAdapter extends ArrayAdapter<Conversation> {
         if (!hasSeen)
             tv.setTypeface(null, Typeface.BOLD);
 
+        int[] images = {R.drawable.human1, R.drawable.human2, R.drawable.human3};
+        ImageView imageView = (ImageView) view.findViewById(R.id.conversation_icon);
+        Random rn = new Random();
+        int random = rn.nextInt((images.length-1) - 0 + 1) + 0;
+        imageView.setBackgroundResource(images[random]);
 
         return view;
     }

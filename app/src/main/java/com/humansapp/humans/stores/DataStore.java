@@ -7,6 +7,7 @@ import com.humansapp.humans.adapters.ConversationsAdapter;
 import com.humansapp.humans.adapters.MessagesAdapter;
 import com.humansapp.humans.models.Conversation;
 import com.humansapp.humans.models.Message;
+import com.humansapp.humans.models.User;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class DataStore {
                         if (ad.getCount() > 0) {
                             Message lastMessage = ad.getItem(ad.getCount()-1);
                             c.setLastMessage(lastMessage);
-                            c.setHasSeen(new String[0]);
+                            c.setHasSeen(new ArrayList<User>());
                             conversationsAdapter.sort();
                         }
                         break;

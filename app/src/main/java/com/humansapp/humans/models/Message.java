@@ -13,9 +13,8 @@ import java.util.TimeZone;
  */
 public class Message implements Comparable<Message> {
     private String id;
-    private String userId;
-    private String name;
     private String body;
+    private String userId;
     private String conversationId;
     private String created;
 
@@ -43,10 +42,6 @@ public class Message implements Comparable<Message> {
 
     public String getCreatedString() {
         return this.created;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public String getBody() { return this.body; }

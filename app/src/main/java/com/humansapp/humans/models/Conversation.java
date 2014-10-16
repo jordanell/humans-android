@@ -2,6 +2,7 @@ package com.humansapp.humans.models;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -9,10 +10,9 @@ import java.util.Date;
  */
 public class Conversation implements Comparable<Conversation> {
     private String id;
-    private String[] userIds;
-    private String name;
-    private String lastMessage;
-    private String[] seenIds;
+    private ArrayList<User> users;
+    private Message lastMessage;
+    private ArrayList<User> seenUsers;
     private String created;
     private String updated;
 
@@ -28,17 +28,22 @@ public class Conversation implements Comparable<Conversation> {
         if(lastMessage == null) {
             return "Be the first to say something!";
         } else {
-            return lastMessage;
+            return lastMessage.getBody();
         }
     }
 
     public void setLastMessage(Message message) {
-        this.lastMessage = message.getBody();
+        this.lastMessage = message;
         this.updated = message.getCreatedString();
     }
 
-    public String getName() {
-        return this.name;
+    public String getName(String id) {
+        for(User user: users) {
+            if (!user.getId().equals(id)) {
+                return user.getName();
+            }
+        }
+        return "Anonymous";
     }
 
     public Date getUpdated() {
@@ -50,21 +55,20 @@ public class Conversation implements Comparable<Conversation> {
         return this.id;
     }
 
-    public String[] getSeenIds() {
-        return this.seenIds;
+    public ArrayList<User> getSeenUsers() {
+        return this.seenUsers;
     }
 
-    public void setHasSeen(String[] seenIds) {
-        this.seenIds = seenIds;
+    public void setHasSeen(ArrayList<User> seenUsers) {
+        this.seenUsers = seenUsers;
     }
 
     public boolean hasSeen(String userId) {
-        for(int i = 0; i < seenIds.length; i++) {
-            if (seenIds[i].equals(userId)) {
+        for(User user: seenUsers) {
+            if (user.getId().equals(userId)) {
                 return true;
             }
         }
-
         return false;
     }
 }

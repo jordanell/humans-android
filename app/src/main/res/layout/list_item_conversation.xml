@@ -19,7 +19,7 @@
             android:gravity="center"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
-            android:src="@drawable/human" />
+            android:src="@drawable/human1" />
 
         <TextView
             android:id="@+id/conversation_title"

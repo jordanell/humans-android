@@ -7,10 +7,15 @@ import java.util.Map;
  */
 public class User {
     private String id;
+    private String name;
 
     public User() {}
 
     public String getId() {
         return this.id;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
